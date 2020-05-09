@@ -1,0 +1,15 @@
+{
+  "name": "cocktail_finder",
+  "version": "1.0.0",
+  "description": "Find fun cocktails to make, no matter whats in your fridge",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Bryce Thuilot <mail@brycethuilot.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
