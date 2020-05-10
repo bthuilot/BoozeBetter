@@ -1,12 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-class List extends Component {
+class Search extends Component {
   // Initialize the state
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
-      response: ""
-    }
+      recipes: [],
+      page: 1,
+    };
   }
 
   // Fetch the list on first mount
@@ -16,32 +17,31 @@ class List extends Component {
 
   // Retrieves the list of items from the Express app
   getList = () => {
-    fetch('/login')
-    .then(res => res.json())
-    .then(response => this.setState({ response }))
-  }
+    fetch("/api/recipes/search")
+      .then((res) => res.json())
+      .then((response) => this.setState({ response }));
+  };
 
   render() {
-    const { response } = this.state;
+    const { recipes } = this.state;
 
     return (
       <div className="App">
         <h1>List of Items</h1>
         {/* Check to see if any items are found*/}
-        {response.length ? (
+        {recipes.length ? (
           <div>
             {/* Render the list of items */}
-            {response}
+            {recipes}
           </div>
         ) : (
           <div>
             <h2>Server didn't respond</h2>
           </div>
-        )
-      }
+        )}
       </div>
     );
   }
 }
 
-export default List;
+export default Search;
