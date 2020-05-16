@@ -1,8 +1,8 @@
-const { Pool } = require("pg");
+const { Pool } = require('pg');
 
 class Database {
-  constructor(db_config) {
-    this.pool = new Pool(db_config);
+  constructor(dbConfig) {
+    this.pool = new Pool(dbConfig);
   }
 
   runQuery(query, params) {

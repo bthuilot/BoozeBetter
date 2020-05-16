@@ -3,7 +3,6 @@ const { itif } = require('../test_helpers');
 const { readConfigFiles } = require('../../config/config');
 const RecipeDAO = require('../../db/recipe');
 const Recipe = require('../../models/recipe');
-const { describe, expect, beforeAll, afterAll } = require('@jest/globals');
 
 const RUN_TESTS = process.env.TEST_DB === '1';
 const TEST_ID_1 = 11111111;
@@ -45,7 +44,7 @@ let recipeDAO;
 let db;
 
 beforeAll(async () => {
-  let configFile = readConfigFiles();
+  const configFile = readConfigFiles();
   db = new Database(configFile.db);
   await setUpTestData(db);
   recipeDAO = new RecipeDAO(db);

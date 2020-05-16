@@ -66,32 +66,30 @@ class RecipeDAO {
   }
 
   async getRecipesWithItems(items, limit = 0) {
-    let changedItems = items.map((item) => item.replace(/\s/g, '%'));
+    const changedItems = items.map((item) => item.replace(/\s/g, '%'));
 
-    let like_queries = [];
-    for (let i = 0; i < changedItems.length; i++) {
-      like_queries.append('name LIKE $' + i);
+    const likeQueries = [];
+    for (let i = 0; i < changedItems.length; i += 1) {
+      likeQueries.append(`name LIKE $${i}`);
     }
-    let id = await this.db.runQuery(
-      RECIPE_ID_WITH_INGRIDENTS +
-        like_queries.join(' OR ') +
-        (limit > 0 ? ` LIMIT ${limit};` : ';'),
+    const id = await this.db.runQuery(
+      RECIPE_ID_WITH_INGRIDENTS + likeQueries.join(' OR ') + (limit > 0 ? ` LIMIT ${limit};` : ';'),
       changedItems
     );
   }
 
   async getRecipeByID(id) {
-    let recipe = await this.db.runQuery(GET_RECIPE_BY_ID, [id]);
-    if (recipe.rows.length == 0) {
+    const recipe = await this.db.runQuery(GET_RECIPE_BY_ID, [id]);
+    if (recipe.rows.length === 0) {
       throw new Error(`Recipe with id ${id} doesn't exist`);
     }
-    let ingredients = await this.db.runQuery(GET_INGREIDENTS_BY_RECIPE_ID, [id]);
-    let instructions = await this.db.runQuery(GET_INSTRUCITION_BY_RECIPE_ID, [id]);
+    const ingredients = await this.db.runQuery(GET_INGREIDENTS_BY_RECIPE_ID, [id]);
+    const instructions = await this.db.runQuery(GET_INSTRUCITION_BY_RECIPE_ID, [id]);
     return RecipeDAO.formatRecipe(recipe.rows[0], ingredients.rows, instructions.rows);
   }
 
   static formatRecipe(recipeJSON, ingredientsJSON, instructionsJSON) {
-    let recipe = new Recipe();
+    const recipe = new Recipe();
     recipe.setName(recipeJSON.name);
     recipe.setDesc(recipeJSON.description);
     recipe.setIngredients(RecipeDAO.formatIngredients(ingredientsJSON));
@@ -101,7 +99,7 @@ class RecipeDAO {
 
   static formatInstructions(json) {
     return json.map((element) => {
-      let instruction = new Instruction();
+      const instruction = new Instruction();
       instruction.setDesc(element.description);
       return instruction;
     });
@@ -109,7 +107,7 @@ class RecipeDAO {
 
   static formatIngredients(json) {
     return json.map((element) => {
-      let ingredient = new Ingredient();
+      const ingredient = new Ingredient();
       ingredient.setItemName(element.item_name);
       ingredient.setQuantity(element.quantity);
       ingredient.setUnit(element.unit);
@@ -118,36 +116,33 @@ class RecipeDAO {
   }
 
   async createRecipe(recipe) {
-    let result = this.db.runQuery(CREATE_RECIPE, [recipe.getName(), recipe.getDesc()]);
+    const result = this.db.runQuery(CREATE_RECIPE, [recipe.getName(), recipe.getDesc()]);
     const id = result.rows[0];
-    await this._createIngredients(id, recipe.getIngredients());
+    await this.createIngredients(id, recipe.getIngredients());
 
-    await this._createInstructions(id, recipe.getInstructions());
+    await this.createInstructions(id, recipe.getInstructions());
   }
 
-  async _createIngredients(recipe_id, ingredients) {
-    let ingredientParams = [recipe_id];
+  async createIngredients(recipeId, ingredients) {
+    const ingredientParams = [recipeId];
     const ingredientQuery =
       CREATE_ITEMS +
       ingredients.reduce((acc, val, idx) => {
-        ingredientParams.append(val.getItemName());
-        ingredientParams.append(val.getUnit());
-        ingredientParams.append(val.getQuantity());
-        return (
-          acc + (idx == 0 ? '' : ',') + `($${idx * 3 + 2}, $${idx * 3 + 3}, $${idx * 3 + 4}, $1) `
-        );
+        ingredientParams.push(val.getItemName(), val.getUnit(), val.getQuantity());
+        return `${acc + (idx === 0 ? '' : ',')}($${idx * 3 + 2}, $${idx * 3 + 3}, $${
+          idx * 3 + 4
+        }, $1) `;
       }, '');
     await this.db.runQuery(ingredientQuery, ingredientParams);
   }
 
-  async _createInstructions(recipe_id, ingredients) {
-    let instructionParams = [recipe_id];
+  async createInstructions(recipeId, instructions) {
+    const instructionParams = [recipeId];
     const instructionQuery =
       CREATE_ITEMS +
-      ingredients.reduce((acc, val, idx) => {
-        instructionsParams.append(val.getDesc());
-        ingredientParams.append(val.getOrder());
-        return acc + (idx == 0 ? '' : ',') + `($${idx * 2 + 2}, $${idx * 2 + 3}, $1) `;
+      instructions.reduce((acc, val, idx) => {
+        instructionParams.push(val.getDesc(), val.getOrder());
+        return `${acc + (idx === 0 ? '' : ',')}($${idx * 2 + 2}, $${idx * 2 + 3}, $1) `;
       }, '');
     this.db.runQuery(instructionQuery, instructionParams);
   }

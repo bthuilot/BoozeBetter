@@ -7,7 +7,9 @@ class RecipeManager {
     return this.dao.getRecipesWithItems(ingredents, limit);
   }
 
-  createRecipe(recipe) {}
+  createRecipe(recipe) {
+    return this.dao.createRecipe(recipe);
+  }
 }
 
 export default RecipeManager;

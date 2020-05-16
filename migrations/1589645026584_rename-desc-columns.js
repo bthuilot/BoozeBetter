@@ -3,6 +3,6 @@
 exports.shorthands = undefined;
 
 exports.up = (pgm) => {
-  pgm.renameColumn("recipes", "desc", "description");
-  pgm.renameColumn("instructions", "desc", "description");
+  pgm.renameColumn('recipes', 'desc', 'description');
+  pgm.renameColumn('instructions', 'desc', 'description');
 };

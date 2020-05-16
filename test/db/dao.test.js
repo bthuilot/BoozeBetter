@@ -1,16 +1,16 @@
-const { Database } = require("../../db/dao");
-const { itif } = require("../test_helpers");
-const { readConfigFiles } = require("../../config/config");
+const { Database } = require('../../db/dao');
+const { itif } = require('../test_helpers');
+const { readConfigFiles } = require('../../config/config');
 
-describe("running querys on database", () => {
-  const run_tests = process.env.TEST_DB == 1;
+describe('running querys on database', () => {
+  const RUN_TESTS = process.env.TEST_DB === '1';
   let db;
   beforeAll(() => {
-    config_file = readConfigFiles();
-    db = new Database(config_file["db"]);
+    let configFile = readConfigFiles();
+    db = new Database(configFile.db);
   });
 
-  itif(run_tests)("run table query", () => {
+  itif(RUN_TESTS)('run table query', () => {
     expect.assertions(1);
     return db
       .runQuery(

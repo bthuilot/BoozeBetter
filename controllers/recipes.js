@@ -1,21 +1,19 @@
-const BaseController = require("./base");
-
-class RecipesController extends BaseController {
+class RecipesController {
   constructor(manager) {
     this.manager = manager;
   }
 
   registerRoutes(app) {
     // Retunrs a pagninated list of recipes based on search query
-    app.get("/recipes", (req, res) => {
-      query = this.parseQuery(req.query.q);
-      limit = req.query.limit;
+    app.get('/recipes', (req, res) => {
+      const query = RecipesController.parseQuery(req.query.q);
+      const limit = req.query.limit;
       res.json(this.manager.getRecipes(query, limit));
     });
   }
 
-  parseQuery(query) {
-    splitQuery = query.split("+");
+  static parseQuery(query) {
+    const splitQuery = query.split('+');
     return splitQuery.map((element) => decodeURIComponent(element));
   }
 }

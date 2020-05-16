@@ -1,13 +1,10 @@
-const fs = require("fs");
-const yml = require("js-yaml");
+const fs = require('fs');
+const yml = require('js-yaml');
 
 function readConfigFiles() {
   let fileContents;
   try {
-    fileContents = fs.readFileSync(
-      __dirname + `/secrets/${getEnviromentName()}.yaml`,
-      "utf8"
-    );
+    fileContents = fs.readFileSync(__dirname + `/secrets/${getEnviromentName()}.yaml`, 'utf8');
   } catch {
     console.error(`Unable to read config file for env ${getEnviromentName()}`);
   }
@@ -17,7 +14,7 @@ function readConfigFiles() {
 }
 
 function getEnviromentName() {
-  return process.env.NODE_ENV;
+  return process.env.NODE_ENV || 'development';
 }
 
 module.exports = { readConfigFiles, getEnviromentName };
