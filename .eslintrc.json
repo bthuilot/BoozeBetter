@@ -2,14 +2,15 @@
   "env": {
     "commonjs": true,
     "es6": true,
-    "node": true
+    "node": true,
+    "jest/globals": true
   },
   "extends": ["airbnb-base", "prettier"],
   "globals": {
     "Atomics": "readonly",
     "SharedArrayBuffer": "readonly"
   },
-  "plugins": ["prettier"],
+  "plugins": ["prettier", "jest"],
   "parserOptions": {
     "ecmaVersion": 2018
   },
