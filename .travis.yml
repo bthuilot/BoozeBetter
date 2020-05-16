@@ -1,0 +1,17 @@
+anguage: node_js
+node_js:
+  - '14.2.0'
+branches:
+  only:
+    - master
+    - develop
+cache:
+  directories:
+    - node_modules
+before_install:
+  - yarn update
+install:
+  - yarn install
+script:
+  - yarn lint
+  - yarn test
