@@ -3,6 +3,8 @@ const { itif } = require('../test_helpers');
 const { readConfigFiles } = require('../../config/config');
 const RecipeDAO = require('../../db/recipe');
 const Recipe = require('../../models/recipe');
+const Ingredient = require('../../models/ingredient');
+const Instruction = require('../../models/instruction');
 
 const RUN_TESTS = process.env.TEST_DB === '1';
 const TEST_ID_1 = 11111111;
@@ -130,5 +132,63 @@ describe('getting recipe data', () => {
     expect(res.length).toBe(2);
     validateTestRecipe1(res[0]);
     validateTestRecipe3(res[1]);
+  });
+});
+
+function createNewTestRecipe() {
+  const recipe = new Recipe();
+  recipe.setName('TEST_RECIPE_4');
+  recipe.setDesc('TEST_RECIPE_4_DESC');
+  // Create Ingredient
+  const ingredient = new Ingredient();
+  ingredient.setItemName('TEST_INGREDIENT_4');
+  ingredient.setQuantity('4');
+  ingredient.setUnit('Oz');
+
+  recipe.setIngredients([ingredient]);
+  // Create Instructions
+  const instruction1 = new Instruction();
+  const instruction2 = new Instruction();
+  instruction1.setDesc('1');
+  instruction2.setDesc('2');
+
+  recipe.setInstructions([instruction1, instruction2]);
+  return recipe;
+}
+
+describe('creating recipes', () => {
+  itif(RUN_TESTS)('create new recipe', async () => {
+    const created = createNewTestRecipe();
+    const id = await recipeDAO.createRecipe(created);
+    expect(id).not.toBe(-1);
+    const returned = await recipeDAO.getRecipeByID(id);
+    // Cleanup now incase test fails
+    recipeDAO.removeRecipesWithIDs(id);
+    expect(returned).toStrictEqual(created);
+  });
+});
+
+describe('removing reicpes', () => {
+  itif(RUN_TESTS)('delete 1 recipe', async () => {
+    const created = createNewTestRecipe();
+    const id = await recipeDAO.createRecipe(created);
+    expect(id).not.toBe(-1);
+    await recipeDAO.removeRecipesWithIDs(id);
+    expect(recipeDAO.getRecipeByID(id)).rejects.toThrow(`Recipe with id ${id} doesn't exist`);
+  });
+
+  itif(RUN_TESTS)('delete multiple recipes', async () => {
+    const created = createNewTestRecipe();
+    const id1 = await recipeDAO.createRecipe(created);
+    const id2 = await recipeDAO.createRecipe(created);
+    expect(id1).not.toBe(-1);
+    expect(id2).not.toBe(-1);
+    await recipeDAO.removeRecipesWithIDs(id1, id2);
+    await expect(recipeDAO.getRecipeByID(id1)).rejects.toThrow(
+      `Recipe with id ${id1} doesn't exist`
+    );
+    await expect(recipeDAO.getRecipeByID(id2)).rejects.toThrow(
+      `Recipe with id ${id2} doesn't exist`
+    );
   });
 });

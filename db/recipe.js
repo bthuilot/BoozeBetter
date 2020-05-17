@@ -11,9 +11,8 @@ const RECIPE_ID_WITH_INGRIDENTS = `
 `;
 
 const CREATE_RECIPE = `
-  INSERT INTO recipes (name, desc)
-  OUTPUT Inserted.id
-  VALUES ($1, $2)
+  INSERT INTO recipes (name, description)
+  VALUES ($1, $2) RETURNING id
 `;
 
 const CREATE_ITEMS = `
@@ -25,8 +24,8 @@ const CREATE_ITEMS = `
 
 const CREATE_INSTRUCTIONS = `
   INSERT INTO 
-  ingredients 
-  (description, order, recipe_id)
+  instructions
+  (description, ordering, recipe_id)
   VALUES
 `;
 
@@ -58,6 +57,13 @@ const GET_INSTRUCITION_BY_RECIPE_ID = `
   ORDER BY 
   ordering 
   ASC
+`;
+
+const DELETE_RECIPE_QUERY = `
+  DELETE FROM
+  recipes
+  WHERE 
+  id IN 
 `;
 
 class RecipeDAO {
@@ -126,11 +132,15 @@ class RecipeDAO {
   }
 
   async createRecipe(recipe) {
-    const result = this.db.runQuery(CREATE_RECIPE, [recipe.getName(), recipe.getDesc()]);
-    const id = result.rows[0];
+    const result = await this.db.runQuery(CREATE_RECIPE, [recipe.getName(), recipe.getDesc()]);
+    if (result.rows.length !== 1) {
+      return -1;
+    }
+    const { id } = result.rows[0];
     await this.createIngredients(id, recipe.getIngredients());
 
     await this.createInstructions(id, recipe.getInstructions());
+    return id;
   }
 
   async createIngredients(recipeId, ingredients) {
@@ -151,10 +161,16 @@ class RecipeDAO {
     const instructionQuery =
       CREATE_INSTRUCTIONS +
       instructions.reduce((acc, val, idx) => {
-        instructionParams.push(val.getDesc(), val.getOrder());
+        instructionParams.push(val.getDesc(), idx + 1);
         return `${acc + (idx === 0 ? '' : ',')}($${idx * 2 + 2}, $${idx * 2 + 3}, $1) `;
       }, '');
-    this.db.runQuery(instructionQuery, instructionParams);
+    await this.db.runQuery(instructionQuery, instructionParams);
+  }
+
+  async removeRecipesWithIDs(...ids) {
+    const params = ids.map((id, index) => `$${index + 1}`);
+    const query = `${DELETE_RECIPE_QUERY} (${params.join(', ')})`;
+    await this.db.runQuery(query, ids);
   }
 }
 
