@@ -1,7 +1,15 @@
 # Booze Better!
 
+[![Build Status](https://travis-ci.com/bthuilot/Cocktail-Finder.svg?token=DwRwXcm2t95em7ygX8ov&branch=master)](https://travis-ci.com/bthuilot/Cocktail-Finder) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
+
 A simple react app to find cocktails based on what you have in your kitchen.
 No matter what you have in your frigde, you should BoozeBetter!
+
+## Contributing
+
+Contributions are always welcome! Feel free to fork this repo and make a PR if you would like to contriubte
+
+When making a PR be sure to run all tests (including Database tests `yarn test:db`) and run eslint `yarn lint`
 
 ## Running locally
 
