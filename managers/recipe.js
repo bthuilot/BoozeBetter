@@ -12,4 +12,4 @@ class RecipeManager {
   }
 }
 
-export default RecipeManager;
+module.exports = RecipeManager;

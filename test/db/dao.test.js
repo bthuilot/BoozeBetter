@@ -1,4 +1,4 @@
-const { Database } = require('../../db/dao');
+const Database = require('../../db/dao');
 const { itif } = require('../test_helpers');
 const { readConfigFiles } = require('../../config/config');
 
@@ -6,7 +6,7 @@ describe('running querys on database', () => {
   const RUN_TESTS = process.env.TEST_DB === '1';
   let db;
   beforeAll(() => {
-    let configFile = readConfigFiles();
+    const configFile = readConfigFiles();
     db = new Database(configFile.db);
   });
 

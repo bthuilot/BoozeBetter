@@ -1,4 +1,4 @@
-const { Database } = require('../../db/dao');
+const Database = require('../../db/dao');
 const { itif } = require('../test_helpers');
 const { readConfigFiles } = require('../../config/config');
 const RecipeDAO = require('../../db/recipe');
@@ -7,6 +7,7 @@ const Recipe = require('../../models/recipe');
 const RUN_TESTS = process.env.TEST_DB === '1';
 const TEST_ID_1 = 11111111;
 const TEST_ID_2 = 11111112;
+const TEST_ID_3 = 11111113;
 
 async function setUpTestData(db) {
   // TODO rename column
@@ -14,6 +15,10 @@ async function setUpTestData(db) {
     await db.runQuery(
       `INSERT INTO recipes (id, name, description) VALUES ($1, 'TEST_RECIPE', 'THIS_IS_A_TEST')`,
       [TEST_ID_1]
+    );
+    await db.runQuery(
+      `INSERT INTO recipes (id, name, description) VALUES ($1, 'TEST_RECIPE_3', 'THIS_IS_A_TEST_3')`,
+      [TEST_ID_3]
     );
     await db.runQuery(
       `INSERT INTO ingredients (item_name, quantity, unit, recipe_id) VALUES ('TEST_ITEM_1', '3/4', 'cup', $1)`,
@@ -24,6 +29,10 @@ async function setUpTestData(db) {
       [TEST_ID_1]
     );
     await db.runQuery(
+      `INSERT INTO ingredients (item_name, quantity, unit, recipe_id) VALUES ('TEST_ITEM_3', '1/5', 'gram', $1)`,
+      [TEST_ID_3]
+    );
+    await db.runQuery(
       `INSERT INTO instructions (description, ordering, recipe_id) VALUES ('INSTRUCTION_1', 1, $1)`,
       [TEST_ID_1]
     );
@@ -31,12 +40,16 @@ async function setUpTestData(db) {
       `INSERT INTO instructions (description, ordering, recipe_id) VALUES ('INSTRUCTION_2', 2, $1)`,
       [TEST_ID_1]
     );
+    await db.runQuery(
+      `INSERT INTO instructions (description, ordering, recipe_id) VALUES ('INSTRUCTION_3', 1, $1)`,
+      [TEST_ID_3]
+    );
   }
 }
 
 async function tearDownData(db) {
   if (RUN_TESTS) {
-    await db.runQuery(`DELETE FROM recipes WHERE id = ${TEST_ID_1}`);
+    await db.runQuery(`DELETE FROM recipes WHERE id in ($1, $2)`, [TEST_ID_1, TEST_ID_3]);
   }
 }
 
@@ -65,7 +78,7 @@ function validateIngredient(ingr, name, quantity, unit) {
   expect(ingr.getUnit()).toBe(unit);
 }
 
-function validateTestRecipe(recipe) {
+function validateTestRecipe1(recipe) {
   expect(recipe instanceof Recipe).toBeTruthy();
   validateRecipe(recipe, 'TEST_RECIPE', 'THIS_IS_A_TEST');
 
@@ -80,10 +93,23 @@ function validateTestRecipe(recipe) {
   expect(instructions[1].getDesc()).toBe('INSTRUCTION_2');
 }
 
+function validateTestRecipe3(recipe) {
+  expect(recipe instanceof Recipe).toBeTruthy();
+  validateRecipe(recipe, 'TEST_RECIPE_3', 'THIS_IS_A_TEST_3');
+
+  const ingredients = recipe.getIngredients();
+  expect(ingredients.length).toBe(1);
+  validateIngredient(ingredients[0], 'TEST_ITEM_3', '1/5', 'gram');
+
+  const instructions = recipe.getInstructions();
+  expect(instructions.length).toBe(1);
+  expect(instructions[0].getDesc()).toBe('INSTRUCTION_3');
+}
+
 describe('getting recipe data', () => {
   itif(RUN_TESTS)('get recipe by id', async () => {
     const res = await recipeDAO.getRecipeByID(TEST_ID_1);
-    validateTestRecipe(res);
+    validateTestRecipe1(res);
   });
 
   itif(RUN_TESTS)('get recipe that doesnt exist', async () => {
@@ -92,5 +118,17 @@ describe('getting recipe data', () => {
     );
   });
 
-  itif(RUN_TESTS)('get recipe by ingredient likeness', async () => {});
+  itif(RUN_TESTS)('get recipes by id', async () => {
+    const res = await recipeDAO.getRecipesWithIDs([TEST_ID_1, TEST_ID_3]);
+    expect(res.length).toBe(2);
+    validateTestRecipe1(res[0]);
+    validateTestRecipe3(res[1]);
+  });
+
+  itif(RUN_TESTS)('get recipe by ingredient likeness', async () => {
+    const res = await recipeDAO.getRecipesWithItems(['TEST ITEM']);
+    expect(res.length).toBe(2);
+    validateTestRecipe1(res[0]);
+    validateTestRecipe3(res[1]);
+  });
 });

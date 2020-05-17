@@ -66,16 +66,26 @@ class RecipeDAO {
   }
 
   async getRecipesWithItems(items, limit = 0) {
-    const changedItems = items.map((item) => item.replace(/\s/g, '%'));
+    const changedItems = items.map((item) => `%${item.replace(/\s/g, '%')}%`);
 
     const likeQueries = [];
-    for (let i = 0; i < changedItems.length; i += 1) {
-      likeQueries.append(`name LIKE $${i}`);
+    for (let i = 1; i < changedItems.length + 1; i += 1) {
+      likeQueries.push(`item_name LIKE $${i}`);
     }
-    const id = await this.db.runQuery(
+    const recipeIds = await this.db.runQuery(
       RECIPE_ID_WITH_INGRIDENTS + likeQueries.join(' OR ') + (limit > 0 ? ` LIMIT ${limit};` : ';'),
       changedItems
     );
+
+    if (recipeIds.rows.length === 0) {
+      return [];
+    }
+
+    return this.getRecipesWithIDs(recipeIds.rows.map((row) => row.recipe_id));
+  }
+
+  async getRecipesWithIDs(ids) {
+    return Promise.all(ids.map((id) => this.getRecipeByID(id)));
   }
 
   async getRecipeByID(id) {
@@ -139,7 +149,7 @@ class RecipeDAO {
   async createInstructions(recipeId, instructions) {
     const instructionParams = [recipeId];
     const instructionQuery =
-      CREATE_ITEMS +
+      CREATE_INSTRUCTIONS +
       instructions.reduce((acc, val, idx) => {
         instructionParams.push(val.getDesc(), val.getOrder());
         return `${acc + (idx === 0 ? '' : ',')}($${idx * 2 + 2}, $${idx * 2 + 3}, $1) `;

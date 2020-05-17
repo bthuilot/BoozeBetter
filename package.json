@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "concurrently \"cd frontend && yarn start\" \"yarn start\"",
     "test": "env NODE_ENV=test jest",
+    "test:db": "env NODE_ENV=test TEST_DB=1 jest",
     "migrate": "env DATABASE_URL=$(yarn database:url) node-pg-migrate",
     "database:url": "node bin/printDatabaseUrl.js",
     "lint": "eslint \"./**/*.js\""
