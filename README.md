@@ -1,6 +1,6 @@
 # Booze Better!
 
-[![Build Status](https://travis-ci.com/bthuilot/Cocktail-Finder.svg?token=DwRwXcm2t95em7ygX8ov&branch=master)](https://travis-ci.com/bthuilot/Cocktail-Finder) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
+[![Build Status](https://travis-ci.com/bthuilot/BoozeBetter.svg?token=DwRwXcm2t95em7ygX8ov&branch=master)](https://travis-ci.com/bthuilot/BoozeBetter) [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 A simple react app to find cocktails based on what you have in your kitchen.
 No matter what you have in your frigde, you should BoozeBetter!
