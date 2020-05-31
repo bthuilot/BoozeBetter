@@ -12,9 +12,10 @@ const RecipeController = require('./controllers/recipes');
 
 function serve() {
   const app = express();
+  app.use(express.json());
 
   // Serve the static files from the React app
-  app.use(express.static(join(__dirname, 'frontend/build')));
+  app.use(express.static(join(__dirname, '../client/build')));
 
   const config = readConfigFiles();
 
@@ -45,6 +46,11 @@ function serve() {
   const recipeController = new RecipeController(recipeManager);
 
   setRoutes([recipeController], app);
+
+  // Route all unknown requests to react
+  app.get('*', (req, res) => {
+    res.sendFile(join(`${__dirname}/../client/build/index.html`));
+  });
 
   const port = process.env.PORT || 5000;
   app.listen(port);

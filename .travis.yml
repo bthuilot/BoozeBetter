@@ -1,17 +1,26 @@
 language: node_js
 node_js:
-  - '14.2.0'
+  - "14.2.0"
 branches:
   only:
     - master
     - develop
 cache:
   directories:
-    - node_modules
+    - */node_modules
 before_install:
+  - pushd src
   - yarn upgrade
+  - popd
+  # TODO Add react directory
 install:
+  - pushd src
   - yarn install
+  - popd
+  # TODO Add react directory
 script:
+  - pushd src
   - yarn lint
   - yarn test
+  - popd
+  # TODO Add react directory

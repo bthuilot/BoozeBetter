@@ -3,6 +3,7 @@ import { Route, Switch } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import Search from "./pages/Search";
+import NewRecipe from "./pages/Recipes/New";
 import Container from "react-bootstrap/Container";
 
 class App extends Component {
@@ -12,6 +13,7 @@ class App extends Component {
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/search" component={Search} />
+          <Route path="/recipes/new" component={NewRecipe} />
         </Switch>
       </Container>
     );

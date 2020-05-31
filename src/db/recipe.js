@@ -83,10 +83,6 @@ class RecipeDAO {
       changedItems
     );
 
-    if (recipeIds.rows.length === 0) {
-      return [];
-    }
-
     return this.getRecipesWithIDs(recipeIds.rows.map((row) => row.recipe_id));
   }
 

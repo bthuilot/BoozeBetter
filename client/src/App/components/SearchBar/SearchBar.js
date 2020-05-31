@@ -7,6 +7,9 @@ import {
   FormControl,
   Button,
 } from "react-bootstrap";
+
+import "./SearchBar.css";
+
 class SearchBar extends Component {
   constructor() {
     super();
@@ -88,23 +91,25 @@ class SearchBar extends Component {
             )}
           </Col>
         </Row>
-        <Row className="justify-content-left">
-          {this.state.tags.map((tag, index) => {
-            return (
-              <Col key={index} xs={6} md={2}>
-                <Alert
-                  variant="dark"
-                  dismissible
-                  onClose={() => {
-                    this.removeTag(index);
-                  }}
-                >
-                  {tag}
-                </Alert>
-              </Col>
-            );
-          })}
-        </Row>
+        <div className="container horizontal-scrollable">
+          <Row className="justify-content-left">
+            {this.state.tags.map((tag, index) => {
+              return (
+                <Col key={index} xs={6} md={2}>
+                  <Alert
+                    variant="dark"
+                    dismissible
+                    onClose={() => {
+                      this.removeTag(index);
+                    }}
+                  >
+                    {tag}
+                  </Alert>
+                </Col>
+              );
+            })}
+          </Row>
+        </div>
       </Col>
     );
   }

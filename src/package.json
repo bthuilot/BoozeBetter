@@ -4,7 +4,6 @@
   "description": "Find fun cocktails to make, no matter whats in your fridge!",
   "main": "server.js",
   "scripts": {
-    "dev": "concurrently \"cd frontend && yarn start\" \"yarn start\"",
     "test": "env NODE_ENV=test jest",
     "test:db": "env NODE_ENV=test TEST_DB=1 jest",
     "migrate": "env DATABASE_URL=$(yarn database:url) node-pg-migrate",
@@ -23,7 +22,8 @@
     "bootstrap": "^4.4.1",
     "concurrently": "^5.2.0",
     "express": "^4.17.1",
-    "js-yaml": "^3.13.1",
+    "express-validator": "^6.5.0",
+    "js-yaml": "^3.14.0",
     "node-pg-migrate": "^4.8.0",
     "pg": "^8.2.0",
     "react-bootstrap": "^1.0.1"
