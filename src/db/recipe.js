@@ -1,6 +1,5 @@
 const Recipe = require('../models/recipe');
 const Ingredient = require('../models/ingredient');
-const Instruction = require('../models/instruction');
 
 const RECIPE_ID_WITH_INGRIDENTS = `
   SELECT DISTINCT 
@@ -105,22 +104,18 @@ class RecipeDAO {
     recipe.setName(recipeJSON.name);
     recipe.setDesc(recipeJSON.description);
     recipe.setIngredients(RecipeDAO.formatIngredients(ingredientsJSON));
-    recipe.setInstructions(RecipeDAO.formatInstructions(instructionsJSON));
+    recipe.setInstructions(instructionsJSON);
     return recipe;
   }
 
-  static formatInstructions(json) {
-    return json.map((element) => {
-      const instruction = new Instruction();
-      instruction.setDesc(element.description);
-      return instruction;
-    });
+  static recipeFromJSON(recipeJSON) {
+    return RecipeDAO.formatRecipe(recipeJSON, recipeJSON.ingredients, recipeJSON.instructions);
   }
 
   static formatIngredients(json) {
     return json.map((element) => {
       const ingredient = new Ingredient();
-      ingredient.setItemName(element.item_name);
+      ingredient.setItemName(element.itemName);
       ingredient.setQuantity(element.quantity);
       ingredient.setUnit(element.unit);
       return ingredient;
@@ -157,7 +152,7 @@ class RecipeDAO {
     const instructionQuery =
       CREATE_INSTRUCTIONS +
       instructions.reduce((acc, val, idx) => {
-        instructionParams.push(val.getDesc(), idx + 1);
+        instructionParams.push(val, idx + 1);
         return `${acc + (idx === 0 ? '' : ',')}($${idx * 2 + 2}, $${idx * 2 + 3}, $1) `;
       }, '');
     await this.db.runQuery(instructionQuery, instructionParams);

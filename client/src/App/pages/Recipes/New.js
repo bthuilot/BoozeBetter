@@ -1,13 +1,5 @@
 import React, { Component } from "react";
-import {
-  Row,
-  Form,
-  Col,
-  Dropdown,
-  DropdownButton,
-  Button,
-  InputGroup,
-} from "react-bootstrap";
+import { Row, Form, Col, Button, InputGroup, Alert } from "react-bootstrap";
 
 const UNITS = ["oz(s)", "gram(s)", "cup(s)", "tsp", "tbsp", "pinch", "dash"];
 class NewRecipe extends Component {
@@ -18,6 +10,7 @@ class NewRecipe extends Component {
       instructions: ["Mix items together and shake!"],
       name: "Rum & Coke",
       description: "",
+      errors: [],
     };
   }
 
@@ -54,14 +47,26 @@ class NewRecipe extends Component {
     };
     fetch("/recipes/create", requestOptions)
       .then((response) => response.json())
-      .then((data) => this.setState({ postId: data.id }));
+      .then((data) => {
+        if (!data.errors) {
+          this.props.history.push(`/recipes/${data.id}`);
+        }
+        this.setState({ errors: data.errors });
+      });
   };
 
   render() {
     return (
       <Row className="align-self-center mx-0 w-100">
-        <Col>
+        <Col xs={12}>
           <h2 className="text-center">New Recipe</h2>
+        </Col>
+        <Col xs={12} my={1}>
+          {this.state.errors.map((err) => (
+            <Alert key="error" variant={"danger"}>
+              {err.msg}
+            </Alert>
+          ))}
         </Col>
         <Form className="w-100">
           <Form.Group controlId="formRecipeEmail">
@@ -122,7 +127,10 @@ class NewRecipe extends Component {
                   class
                   onClick={() => {
                     this.setState({
-                      ingredients: [...this.state.ingredients, {}],
+                      ingredients: [
+                        ...this.state.ingredients,
+                        { unit: UNITS[0] },
+                      ],
                     });
                   }}
                 >
@@ -181,11 +189,7 @@ class NewRecipe extends Component {
             </Row>
           </Form.Group>
 
-          <Button
-            variant="primary"
-            type="submit"
-            onClick={this.submitNewRecipe}
-          >
+          <Button variant="primary" onClick={this.submitNewRecipe}>
             Submit
           </Button>
         </Form>

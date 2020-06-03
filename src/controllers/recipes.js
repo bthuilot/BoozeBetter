@@ -32,24 +32,34 @@ class RecipesController {
         )
           .exists()
           .isString()
-          .isLength({ min: 5, max: 255 }),
+          .isLength({ max: 255 }),
         check('ingredients.*.unit', 'Units for ingredients must between 5 and 10 characters long')
           .exists()
           .isString()
-          .isLength({ min: 5, max: 255 }),
-        check('ingredients.*.quantity', 'quantity for ingredients must between a numeric value')
+          .isLength({ max: 255 }),
+        check(
+          'ingredients.*.quantity',
+          'quantity for ingredients must a numeric value (i.e. 1/2, 1, 0.5)'
+        )
           .exists()
           .isString()
-          .custom((val) => RegExp('(?:d+|d+.d+|d+\\d+)').test(val)),
-        check('instructions.*.description').exists().isString().isLength({ min: 5, max: 255 }),
+          .custom((val) => /^[\d\W\\\.]+$/.test(val)),
+        check('instructions.*').exists().isString().isLength({ max: 255 }),
         check('description').isString(),
       ],
       (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
           res.status(422).json({ errors: errors.array() });
+          return;
         }
-        res.json(this.manager.createRecipe(req.body));
+        this.manager.createRecipe(req.body).then((id) => {
+          if (id == -1) {
+            res.json({ errors: [{ message: 'Unable to create recipe' }] });
+            return;
+          }
+          res.json({ message: `Succesfully created recipe with id ${id}`, id: id });
+        });
       }
     );
   }
