@@ -4,7 +4,6 @@ const { readConfigFiles } = require('../../config/config');
 const RecipeDAO = require('../../db/recipe');
 const Recipe = require('../../models/recipe');
 const Ingredient = require('../../models/ingredient');
-const Instruction = require('../../models/instruction');
 
 const RUN_TESTS = process.env.TEST_DB === '1';
 const TEST_ID_1 = 11111111;
@@ -147,12 +146,8 @@ function createNewTestRecipe() {
 
   recipe.setIngredients([ingredient]);
   // Create Instructions
-  const instruction1 = new Instruction();
-  const instruction2 = new Instruction();
-  instruction1.setDesc('1');
-  instruction2.setDesc('2');
 
-  recipe.setInstructions([instruction1, instruction2]);
+  recipe.setInstructions(['1', '2']);
   return recipe;
 }
 

@@ -22,8 +22,11 @@ class RecipesController {
     app.post(
       '/recipes/create',
       [
-        // name is at least length 5 and less than length 50
-        check('name').exists().isString().isLength({ min: 5, max: 255 }),
+        // name is at least length 1 and less than length 50
+        check('name', 'Name must be between 1 and 255 characters')
+          .exists()
+          .isString()
+          .isLength({ min: 1, max: 255 }),
         check('ingredients', 'Ingredients must be an array').exists().isArray(),
         check('instructions', 'Instructions must be an array').exists().isArray(),
         check(
@@ -43,9 +46,15 @@ class RecipesController {
         )
           .exists()
           .isString()
-          .custom((val) => /^[\d\W\\\.]+$/.test(val)),
-        check('instructions.*').exists().isString().isLength({ max: 255 }),
-        check('description').isString(),
+          /* eslint-disable no-useless-escape */ .custom((val) => /^[\.\d\W\\]+$/.test(val)),
+        check(
+          'instructions.*',
+          'instructions must contain strings of at least 1 character long and 255'
+        )
+          .exists()
+          .isString()
+          .isLength({ max: 255 }),
+        check('description', 'Description must be a string').isString(),
       ],
       (req, res) => {
         const errors = validationResult(req);
@@ -54,11 +63,11 @@ class RecipesController {
           return;
         }
         this.manager.createRecipe(req.body).then((id) => {
-          if (id == -1) {
+          if (id === -1) {
             res.json({ errors: [{ message: 'Unable to create recipe' }] });
             return;
           }
-          res.json({ message: `Succesfully created recipe with id ${id}`, id: id });
+          res.json({ message: `Succesfully created recipe with id ${id}`, id });
         });
       }
     );
