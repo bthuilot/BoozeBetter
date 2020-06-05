@@ -1,3 +1,5 @@
+const RecipeDAO = require('../db/recipe');
+
 class RecipeManager {
   constructor(dao) {
     this.dao = dao;
@@ -8,7 +10,7 @@ class RecipeManager {
   }
 
   createRecipe(recipe) {
-    return this.dao.createRecipe(recipe);
+    return this.dao.createRecipe(RecipeDAO.recipeFromJSON(recipe));
   }
 }
 

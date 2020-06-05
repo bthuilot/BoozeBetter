@@ -10,19 +10,21 @@ const RecipeManager = require('./managers/recipe');
 // Controllers
 const RecipeController = require('./controllers/recipes');
 
-function serve() {
+const config = readConfigFiles();
+
+function setUpDBConnection() {
+  /**
+   * Setup Database
+   */
+  return new Database(config.database);
+}
+
+function serve(db) {
   const app = express();
   app.use(express.json());
 
   // Serve the static files from the React app
   app.use(express.static(join(__dirname, '../client/build')));
-
-  const config = readConfigFiles();
-
-  /**
-   * Setup Database
-   */
-  const db = new Database(config.database);
 
   /**
    * DAOs *
@@ -52,10 +54,20 @@ function serve() {
     res.sendFile(join(`${__dirname}/../client/build/index.html`));
   });
 
+  return app;
+}
+
+module.exports = { serve };
+
+function main() {
+  const db = setUpDBConnection();
+  const app = serve(db);
   const port = process.env.PORT || 5000;
   app.listen(port);
 
-  console.log(`App is listening on port ${port}`);
+  /* eslint-disable no-console */ console.log(`App is listening on port ${port}`);
 }
 
-serve();
+if (require.main === module) {
+  main();
+}
