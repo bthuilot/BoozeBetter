@@ -4,18 +4,21 @@ import "./App.css";
 import Home from "./pages/Home";
 import Search from "./pages/Search";
 import NewRecipe from "./pages/Recipes/New";
-import Container from "react-bootstrap/Container";
+import About from "./pages/About";
+import { NoMatch } from "./pages/404";
 
 class App extends Component {
   render() {
     const App = () => (
-      <Container className="d-flex h-100 w-100">
+      <React.Fragment>
         <Switch>
           <Route exact path="/" component={Home} />
           <Route path="/search" component={Search} />
           <Route path="/recipes/new" component={NewRecipe} />
+          <Route path="/about" component={About} />
+          <Route component={NoMatch} />
         </Switch>
-      </Container>
+      </React.Fragment>
     );
     return (
       <Switch>

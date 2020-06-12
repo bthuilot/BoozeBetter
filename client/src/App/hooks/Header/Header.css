@@ -1,0 +1,13 @@
+.orange-outline-info {
+  color: #fd9a24;
+  border-color: #fd9a24;
+}
+
+.orange-outline-info:hover,
+.orange-outline-info:focus,
+.orange-outline-info.active,
+.orange-outline-info:active {
+  color: #fff;
+  border-color: #dd561d;
+  background-color: #dd561d;
+}

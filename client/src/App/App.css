@@ -3,6 +3,36 @@
   text-align: center;
 }
 
+.alert-warning {
+  color: #933913;
+  background-color: #ffdf77;
+  border-color: #ffdf77;
+}
+.btn-primary {
+  color: #fff;
+  background-color: #f55f20;
+  border-color: #f55f20;
+}
+.orange-spinner {
+  color: #fbb124;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open > .dropdown-toggle.btn-primary {
+  color: #fff;
+  background-color: #f88f63;
+  border-color: #dd561d; /*set the color you want here*/
+}
+
+.alert-orange {
+  color: #fff;
+  background-color: #fa8223;
+  border-color: #fa8223;
+}
+
 html,
 body,
 #root {

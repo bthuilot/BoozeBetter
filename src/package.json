@@ -26,6 +26,7 @@
     "js-yaml": "^3.14.0",
     "node-pg-migrate": "^4.8.0",
     "pg": "^8.2.0",
+    "qs": "^6.9.4",
     "react-bootstrap": "^1.0.1",
     "supertest": "^4.0.2"
   },

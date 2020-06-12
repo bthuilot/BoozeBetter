@@ -39,7 +39,8 @@ const GET_RECIPE_BY_ID = `
 
 const GET_INGREIDENTS_BY_RECIPE_ID = `
   SELECT 
-  item_name, unit, quantity 
+  item_name,
+  unit, quantity 
   FROM 
   ingredients
   WHERE
@@ -95,12 +96,19 @@ class RecipeDAO {
       throw new Error(`Recipe with id ${id} doesn't exist`);
     }
     const ingredients = await this.db.runQuery(GET_INGREIDENTS_BY_RECIPE_ID, [id]);
+    ingredients.rows.forEach((i) => (i['itemName'] = i.item_name));
     const instructions = await this.db.runQuery(GET_INSTRUCITION_BY_RECIPE_ID, [id]);
-    return RecipeDAO.formatRecipe(recipe.rows[0], ingredients.rows, instructions.rows);
+    return RecipeDAO.formatRecipe(
+      id,
+      recipe.rows[0],
+      ingredients.rows,
+      instructions.rows.map((i) => i.description)
+    );
   }
 
-  static formatRecipe(recipeJSON, ingredientsJSON, instructionsJSON) {
+  static formatRecipe(id, recipeJSON, ingredientsJSON, instructionsJSON) {
     const recipe = new Recipe();
+    recipe.setID(id);
     recipe.setName(recipeJSON.name);
     recipe.setDesc(recipeJSON.description);
     recipe.setIngredients(RecipeDAO.formatIngredients(ingredientsJSON));
@@ -109,7 +117,12 @@ class RecipeDAO {
   }
 
   static recipeFromJSON(recipeJSON) {
-    return RecipeDAO.formatRecipe(recipeJSON, recipeJSON.ingredients, recipeJSON.instructions);
+    return RecipeDAO.formatRecipe(
+      null,
+      recipeJSON,
+      recipeJSON.ingredients,
+      recipeJSON.instructions
+    );
   }
 
   static formatIngredients(json) {
