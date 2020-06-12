@@ -1,4 +1,12 @@
 class Recipe {
+  setID(id) {
+    this.id = id;
+  }
+
+  getID() {
+    return this.id;
+  }
+
   getInstructions() {
     return this.instructions;
   }
@@ -24,11 +32,11 @@ class Recipe {
   }
 
   setDesc(desc) {
-    this.desc = desc;
+    this.description = desc;
   }
 
   getDesc() {
-    return this.desc;
+    return this.description;
   }
 
   toJson() {
@@ -36,7 +44,7 @@ class Recipe {
       ingredients: this.ingredients,
       instructions: this.instructions,
       name: this.name,
-      desc: this.desc,
+      description: this.desc,
     };
   }
 }

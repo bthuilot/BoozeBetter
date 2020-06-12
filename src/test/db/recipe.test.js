@@ -90,8 +90,8 @@ function validateTestRecipe1(recipe) {
 
   const instructions = recipe.getInstructions();
   expect(instructions.length).toBe(2);
-  expect(instructions[0].getDesc()).toBe('INSTRUCTION_1');
-  expect(instructions[1].getDesc()).toBe('INSTRUCTION_2');
+  expect(instructions[0]).toBe('INSTRUCTION_1');
+  expect(instructions[1]).toBe('INSTRUCTION_2');
 }
 
 function validateTestRecipe3(recipe) {
@@ -104,7 +104,7 @@ function validateTestRecipe3(recipe) {
 
   const instructions = recipe.getInstructions();
   expect(instructions.length).toBe(1);
-  expect(instructions[0].getDesc()).toBe('INSTRUCTION_3');
+  expect(instructions[0]).toBe('INSTRUCTION_3');
 }
 
 describe('getting recipe data', () => {
@@ -156,6 +156,7 @@ describe('creating recipes', () => {
     const created = createNewTestRecipe();
     const id = await recipeDAO.createRecipe(created);
     expect(id).not.toBe(-1);
+    created.setID(id);
     const returned = await recipeDAO.getRecipeByID(id);
     // Cleanup now incase test fails
     recipeDAO.removeRecipesWithIDs(id);

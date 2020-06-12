@@ -10,7 +10,11 @@ class RecipesController {
     app.get('/recipes', (req, res) => {
       const { limit, q } = req.query;
       const query = RecipesController.parseQuery(q);
-      this.manager.getRecipes(query, limit).then((result) => res.json(result));
+      if (query.length === 0) {
+        res.json([]);
+      } else {
+        this.manager.getRecipes(query, limit).then((result) => res.json(result));
+      }
     });
 
     // Retunrs a pagninated list of recipes based on search query
@@ -74,8 +78,11 @@ class RecipesController {
   }
 
   static parseQuery(query) {
-    const splitQuery = query.split('+');
-    return splitQuery.map((element) => decodeURIComponent(element));
+    if (!query) {
+      return [];
+    }
+    const splitQuery = query.split(',');
+    return splitQuery.map((element) => decodeURIComponent(element)).filter((i) => i !== '');
   }
 }
 

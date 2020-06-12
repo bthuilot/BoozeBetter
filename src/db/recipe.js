@@ -39,7 +39,8 @@ const GET_RECIPE_BY_ID = `
 
 const GET_INGREIDENTS_BY_RECIPE_ID = `
   SELECT 
-  item_name, unit, quantity 
+  item_name,
+  unit, quantity 
   FROM 
   ingredients
   WHERE
@@ -96,23 +97,44 @@ class RecipeDAO {
     }
     const ingredients = await this.db.runQuery(GET_INGREIDENTS_BY_RECIPE_ID, [id]);
     const instructions = await this.db.runQuery(GET_INSTRUCITION_BY_RECIPE_ID, [id]);
-    return RecipeDAO.formatRecipe(recipe.rows[0], ingredients.rows, instructions.rows);
-  }
-
-  static formatRecipe(recipeJSON, ingredientsJSON, instructionsJSON) {
-    const recipe = new Recipe();
-    recipe.setName(recipeJSON.name);
-    recipe.setDesc(recipeJSON.description);
-    recipe.setIngredients(RecipeDAO.formatIngredients(ingredientsJSON));
-    recipe.setInstructions(instructionsJSON);
-    return recipe;
+    return RecipeDAO.formatRecipe(
+      id,
+      recipe.rows[0],
+      ingredients.rows,
+      instructions.rows.map((i) => i.description)
+    );
   }
 
   static recipeFromJSON(recipeJSON) {
-    return RecipeDAO.formatRecipe(recipeJSON, recipeJSON.ingredients, recipeJSON.instructions);
+    const recipe = new Recipe();
+    recipe.setName(recipeJSON.name);
+    recipe.setDesc(recipeJSON.description);
+    recipe.setIngredients(RecipeDAO.formatJSONIngredients(recipeJSON.ingredients));
+    recipe.setInstructions(recipeJSON.instructions);
+    return recipe;
+  }
+
+  static formatRecipe(id, recipeRow, ingredientsRow, instructionsRow) {
+    const recipe = new Recipe();
+    recipe.setID(id);
+    recipe.setName(recipeRow.name);
+    recipe.setDesc(recipeRow.description);
+    recipe.setIngredients(RecipeDAO.formatIngredients(ingredientsRow));
+    recipe.setInstructions(instructionsRow);
+    return recipe;
   }
 
   static formatIngredients(json) {
+    return json.map((element) => {
+      const ingredient = new Ingredient();
+      ingredient.setItemName(element.item_name);
+      ingredient.setQuantity(element.quantity);
+      ingredient.setUnit(element.unit);
+      return ingredient;
+    });
+  }
+
+  static formatJSONIngredients(json) {
     return json.map((element) => {
       const ingredient = new Ingredient();
       ingredient.setItemName(element.itemName);
