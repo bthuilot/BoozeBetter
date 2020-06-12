@@ -96,7 +96,6 @@ class RecipeDAO {
       throw new Error(`Recipe with id ${id} doesn't exist`);
     }
     const ingredients = await this.db.runQuery(GET_INGREIDENTS_BY_RECIPE_ID, [id]);
-    ingredients.rows.forEach((i) => (i['itemName'] = i.item_name));
     const instructions = await this.db.runQuery(GET_INSTRUCITION_BY_RECIPE_ID, [id]);
     return RecipeDAO.formatRecipe(
       id,
@@ -106,26 +105,36 @@ class RecipeDAO {
     );
   }
 
-  static formatRecipe(id, recipeJSON, ingredientsJSON, instructionsJSON) {
+  static recipeFromJSON(recipeJSON) {
     const recipe = new Recipe();
-    recipe.setID(id);
     recipe.setName(recipeJSON.name);
     recipe.setDesc(recipeJSON.description);
-    recipe.setIngredients(RecipeDAO.formatIngredients(ingredientsJSON));
-    recipe.setInstructions(instructionsJSON);
+    recipe.setIngredients(RecipeDAO.formatJSONIngredients(recipeJSON.ingredients));
+    recipe.setInstructions(recipeJSON.instructions);
     return recipe;
   }
 
-  static recipeFromJSON(recipeJSON) {
-    return RecipeDAO.formatRecipe(
-      null,
-      recipeJSON,
-      recipeJSON.ingredients,
-      recipeJSON.instructions
-    );
+  static formatRecipe(id, recipeRow, ingredientsRow, instructionsRow) {
+    const recipe = new Recipe();
+    recipe.setID(id);
+    recipe.setName(recipeRow.name);
+    recipe.setDesc(recipeRow.description);
+    recipe.setIngredients(RecipeDAO.formatIngredients(ingredientsRow));
+    recipe.setInstructions(instructionsRow);
+    return recipe;
   }
 
   static formatIngredients(json) {
+    return json.map((element) => {
+      const ingredient = new Ingredient();
+      ingredient.setItemName(element.item_name);
+      ingredient.setQuantity(element.quantity);
+      ingredient.setUnit(element.unit);
+      return ingredient;
+    });
+  }
+
+  static formatJSONIngredients(json) {
     return json.map((element) => {
       const ingredient = new Ingredient();
       ingredient.setItemName(element.itemName);
