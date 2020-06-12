@@ -6,7 +6,7 @@
   "scripts": {
     "test": "env NODE_ENV=test jest",
     "test:db": "env NODE_ENV=test TEST_DB=1 jest",
-    "migrate": "env DATABASE_URL=$(yarn database:url) node-pg-migrate",
+    "migrate": "node-pg-migrate",
     "database:url": "node bin/printDatabaseUrl.js",
     "lint": "eslint \"./**/*.js\""
   },
