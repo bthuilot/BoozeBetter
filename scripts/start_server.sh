@@ -1,4 +1,4 @@
-pushd src
-PORT=8080 yarn start &
+pushd /var/www/html/BoozeBetter/src
+PORT=80 yarn start &
 $! > ../pid.tmp
 popd

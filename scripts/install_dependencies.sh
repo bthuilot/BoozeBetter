@@ -1,6 +1,1 @@
-pushd src/
-yarn install
-popd
-pushd client
-yarn install
-popd
+# No dependencies needed so as of now this file does nothin'
