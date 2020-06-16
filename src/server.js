@@ -69,5 +69,6 @@ function main() {
 }
 
 if (require.main === module) {
+  process.title = 'BoozeBetter';
   main();
 }

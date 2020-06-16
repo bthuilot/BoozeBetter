@@ -8,7 +8,8 @@
     "test:db": "env NODE_ENV=test TEST_DB=1 jest",
     "migrate": "node-pg-migrate",
     "database:url": "node bin/printDatabaseUrl.js",
-    "lint": "eslint \"./**/*.js\""
+    "lint": "eslint \"./**/*.js\"",
+    "stop": "kill -2 $(pgrep BoozeBetter)"
   },
   "keywords": [
     "cocktails",
