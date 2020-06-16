@@ -1,3 +1,3 @@
 pushd /var/www/BoozeBetter/src
-PORT=80 yarn start:prod &
+PORT=5000 yarn start:prod &
 popd
