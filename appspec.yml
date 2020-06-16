@@ -5,7 +5,7 @@ files:
     destination: /var/www/html/BoozeBetter
 hooks:
   BeforeInstall:
-    - location: scripts/source_db_url.sh
+    - location: scripts/setup_env.sh
       timeout: 300
       runas: root
   AfterInstall:
