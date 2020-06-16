@@ -1,5 +1,7 @@
 npm install -g yarn
 
+cp /opt/boozebetter/production.yml /var/www/BoozeBetter/src/config/secrets
+
 # install and build client
 pushd /var/www/BoozeBetter/client 
 yarn install

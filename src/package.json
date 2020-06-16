@@ -9,7 +9,8 @@
     "migrate": "node-pg-migrate",
     "database:url": "node bin/printDatabaseUrl.js",
     "lint": "eslint \"./**/*.js\"",
-    "stop": "kill -2 $(pgrep BoozeBetter)"
+    "stop": "kill -2 $(pgrep BoozeBetter)",
+    "start:prod": "env NODE_ENV=production yarn start"
   },
   "keywords": [
     "cocktails",
