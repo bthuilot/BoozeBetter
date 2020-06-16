@@ -5,7 +5,3 @@ if [ -d /var/www/BoozeBetter ]; then
     rm -rf /var/www/BoozeBetter
 fi
 mkdir -vp /var/www/BoozeBetter
-
-# Sourc 
-source /opt/boozebetter/postgres-db.sh
-export DATABASE_URL=postgres://${USER}:${PASSWORD}@${HOST}:${PORT}/${DATABASE}
