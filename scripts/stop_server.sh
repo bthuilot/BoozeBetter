@@ -1,3 +1,3 @@
-pushd /var/www/html/BoozeBetter/src
+pushd /var/www/BoozeBetter/src
 yarn stop
 popd

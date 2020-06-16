@@ -1,11 +1,11 @@
 npm install -g yarn
 
 # install and build client
-pushd /var/www/html/BoozeBetter/client 
+pushd /var/www/BoozeBetter/client 
 yarn install
 yarn build
 popd
 
-pushd /var/www/html/BoozeBetter/src/
+pushd /var/www/BoozeBetter/src/
 yarn install
 popd

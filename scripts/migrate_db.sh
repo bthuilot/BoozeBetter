@@ -1,3 +1,3 @@
-pushd /var/www/html/BoozeBetter/src
-yarn migrate
+pushd /var/www/BoozeBetter/src
+yarn migrate up
 popd
