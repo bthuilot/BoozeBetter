@@ -1,1 +1,3 @@
-kill $(cat pid.temp)
+pushd /var/www/html/BoozeBetter/src
+yarn stop
+popd
