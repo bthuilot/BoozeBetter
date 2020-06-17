@@ -7,9 +7,6 @@ export function Header(props) {
   const [reload, setReload] = useState(false);
   const [query, setQuery] = useState("");
   const { search, ...otherProps } = props;
-  console.log(props);
-  console.log(reload);
-  console.log(query);
 
   useEffect(() => {
     setReload(false);
