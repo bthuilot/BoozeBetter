@@ -1,7 +1,6 @@
 # Source yarn and node location
 source /opt/boozebetter/node.sh
 
-npm install -g yarn
 
 cp /opt/boozebetter/production.yml /var/www/BoozeBetter/src/config/secrets
 

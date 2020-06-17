@@ -28,7 +28,7 @@ export function Header(props) {
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="mr-auto">
           <Nav.Link href="/about">About</Nav.Link>
-          <Nav.Link href="/recipes/new">Add Recipe</Nav.Link>
+          <Nav.Link href="/recipe/new">Add Recipe</Nav.Link>
         </Nav>
         {props.showsearch && (
           <Form inline>
