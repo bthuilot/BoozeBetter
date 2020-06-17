@@ -3,14 +3,12 @@ os: linux
 files:
   - source: /
     destination: /var/www/BoozeBetter
-    owner: ec2-user
-    group: ec2-user
 permissions:
   - object: /var/www/BoozeBetter
     pattern: "**"
     owner: ec2-user
     group: ec2-user
-    mode: 744
+    mode: 644
     type:
       - file
 permissions:
@@ -18,7 +16,6 @@ permissions:
     pattern: "**"
     owner: ec2-user
     group: ec2-user
-    mode: 775
     type:
       - directory
 hooks:
