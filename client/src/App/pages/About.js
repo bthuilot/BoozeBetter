@@ -7,7 +7,7 @@ class About extends Component {
   render() {
     return (
       <Container fluid className="p-0">
-        <Header variant="dark" bg="dark" sticky="top" search={true} />
+        <Header variant="dark" bg="dark" sticky="top" showsearch />
         <Row className="my-4">
           <Col>
             <h1 className="text-center">Hey There!</h1>
