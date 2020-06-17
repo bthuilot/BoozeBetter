@@ -6,9 +6,12 @@ if [ -d /var/www/BoozeBetter ]; then
 fi
 mkdir -vp /var/www/BoozeBetter
 
+mkdir -p /var/log/BoozeBetter
+
 #!/bin/bash
 # Set ownership for all folders and files
 chown -R ec2-user:ec2-user /var/www/
+chown -R ec2-user:ec2-user /var/log/BoozeBetter
 chown -R root:root /var/www/protected
 
 # set files to 644 
