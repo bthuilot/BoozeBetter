@@ -5,7 +5,6 @@ import { Alert, Row, Col } from "react-bootstrap";
 export function Sidebar(props) {
   const [tags, setTags] = useState([...props.tags]);
   const [reload, setReload] = useState(false);
-  console.log(tags);
 
   useEffect(() => {
     setReload(false);

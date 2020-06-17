@@ -72,11 +72,11 @@ class RecipeDAO {
   }
 
   async getRecipesWithItems(items, limit = 0) {
-    const changedItems = items.map((item) => `%${item.replace(/\s/g, '%')}%`);
+    const changedItems = items.map((item) => `.*${item.replace(/\s/g, '.*')}.*`);
 
     const likeQueries = [];
     for (let i = 1; i < changedItems.length + 1; i += 1) {
-      likeQueries.push(`item_name LIKE $${i}`);
+      likeQueries.push(`item_name ~* $${i}`);
     }
     const recipeIds = await this.db.runQuery(
       RECIPE_ID_WITH_INGRIDENTS + likeQueries.join(' OR ') + (limit > 0 ? ` LIMIT ${limit};` : ';'),
