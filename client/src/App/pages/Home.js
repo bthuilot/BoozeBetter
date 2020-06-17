@@ -7,7 +7,7 @@ class Home extends Component {
   render() {
     return (
       <Container className="d-flex h-100 w-100">
-        <Header fixed="top" search={false} />
+        <Header fixed="top" showsearch={false} />
         <Row className="align-self-center mx-0 w-100">
           <Col>
             <Row className="mb-3">

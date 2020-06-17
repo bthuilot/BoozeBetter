@@ -6,18 +6,19 @@ import "./Header.css";
 export function Header(props) {
   const [reload, setReload] = useState(false);
   const [query, setQuery] = useState("");
+  const { search, ...otherProps } = props;
 
   useEffect(() => {
     setReload(false);
     setQuery("");
-  }, [reload, props.search]);
+  }, [reload, props.showsearch]);
 
   if (reload) {
     return <Redirect push to={"/search?q=" + encodeURI(query)} />;
   }
 
   return (
-    <Navbar collapseOnSelect expand="lg" {...props}>
+    <Navbar collapseOnSelect expand="lg" {...otherProps}>
       <Navbar.Brand href="/">
         <span role="img" style={{ fontSize: "1.25em" }} aria-label="booze">
           🍻
@@ -29,7 +30,7 @@ export function Header(props) {
           <Nav.Link href="/about">About</Nav.Link>
           <Nav.Link href="/recipes/new">Add Recipe</Nav.Link>
         </Nav>
-        {props.search && (
+        {props.showsearch && (
           <Form inline>
             <FormControl
               type="text"

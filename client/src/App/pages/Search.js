@@ -64,7 +64,7 @@ class Search extends Component {
   render() {
     return (
       <Container fluid className="p-0">
-        <Header variant="dark" bg="dark" sticky="top" search={true} />
+        <Header variant="dark" bg="dark" sticky="top" showsearch />
         <RecipeModal
           show={this.state.showModal}
           recipe={this.state.currentRecipe}

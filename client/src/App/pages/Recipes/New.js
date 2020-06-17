@@ -67,7 +67,7 @@ class NewRecipe extends Component {
   render() {
     return (
       <Container fluid className="p-0">
-        <Header variant="dark" bg="dark" sticky="top" search={true} />
+        <Header variant="dark" bg="dark" sticky="top" showsearch={true} />
         <Row className="my-4">
           <Col xs={12}>
             <h1 className="text-center">New Recipe</h1>
@@ -140,7 +140,6 @@ class NewRecipe extends Component {
                   <Col>
                     <Button
                       variant="outline-dark"
-                      class
                       onClick={() => {
                         this.setState({
                           ingredients: [
@@ -192,7 +191,6 @@ class NewRecipe extends Component {
                   <Col>
                     <Button
                       variant="outline-dark"
-                      class
                       onClick={() => {
                         this.setState({
                           instructions: [...this.state.instructions, ""],
