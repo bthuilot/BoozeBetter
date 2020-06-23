@@ -57,7 +57,7 @@ export function RecipeModal(props) {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" href={`/recipes/${recipe.id}`}>
             View recipe page
           </Button>
         </Modal.Footer>

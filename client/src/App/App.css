@@ -3,6 +3,14 @@
   text-align: center;
 }
 
+.container > .row {
+  margin: auto;
+}
+
+.container-fluid > .row {
+  margin: auto;
+}
+
 .alert-warning {
   color: #933913;
   background-color: #ffdf77;

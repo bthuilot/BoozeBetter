@@ -68,7 +68,7 @@ function renderAlert(alert, setAlert) {
   }
 }
 
-export function SearchBar() {
+export function SearchBar(props) {
   const [currentSearch, setCurrentSearch] = useState("");
   const [tags, setTags] = useState([]);
   const [alert, setAlert] = useState({
@@ -76,6 +76,7 @@ export function SearchBar() {
     text: "",
   });
   const [submitQuery, setSubmitQuery] = useState(false);
+  const { whiteText } = props;
 
   if (submitQuery) {
     return (
@@ -119,7 +120,9 @@ export function SearchBar() {
             </InputGroup.Append>
           </InputGroup>
           <p>
-            <small>Psstt... use commas to separate terms</small>
+            <small className={whiteText && "text-white"}>
+              Psstt... use commas to separate terms
+            </small>
           </p>
         </Col>
       </Row>

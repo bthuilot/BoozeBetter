@@ -1,4 +1,5 @@
 const { check, validationResult } = require('express-validator');
+const { restricted } = require('../helpers');
 
 class RecipesController {
   constructor(manager) {
@@ -18,9 +19,24 @@ class RecipesController {
     });
 
     // Retunrs a pagninated list of recipes based on search query
-    app.get('/recipes/:id', (req, res) => {
+    app.get('/recipe/:id', (req, res) => {
       const { id } = req.params;
-      res.json(this.manager.getRecipeById(id));
+      this.manager
+        .getRecipeByID(id)
+        .then((res) => {
+          const result = { ...res };
+          if (result.id === -1) {
+            res.json({ errors: [{ msg: `Recipe with id ${id} not found` }] });
+            return;
+          }
+          if (req.userID === result.userID) {
+            result.canEdit = true;
+          }
+          res.json({ recipe: result });
+        })
+        .catch(() => {
+          res.json({ errors: [{ msg: 'An unknown error occurred' }] });
+        });
     });
 
     app.post(
@@ -60,13 +76,14 @@ class RecipesController {
           .isLength({ max: 255 }),
         check('description', 'Description must be a string').isString(),
       ],
+      restricted,
       (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
           res.status(422).json({ errors: errors.array() });
           return;
         }
-        this.manager.createRecipe(req.body).then((id) => {
+        this.manager.createRecipe(req.body, req.userID).then((id) => {
           if (id === -1) {
             res.json({ errors: [{ message: 'Unable to create recipe' }] });
             return;

@@ -9,8 +9,12 @@ class RecipeManager {
     return this.dao.getRecipesWithItems(ingredents, limit);
   }
 
-  createRecipe(recipe) {
-    return this.dao.createRecipe(RecipeDAO.recipeFromJSON(recipe));
+  createRecipe(recipe, userID) {
+    return this.dao.createRecipe(recipe, userID);
+  }
+
+  getRecipeByID(id) {
+    return this.dao.getRecipeByID(id);
   }
 }
 

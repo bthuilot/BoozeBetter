@@ -1,6 +1,3 @@
-const Recipe = require('../models/recipe');
-const Ingredient = require('../models/ingredient');
-
 const RECIPE_ID_WITH_INGRIDENTS = `
   SELECT DISTINCT 
   recipe_id
@@ -10,8 +7,8 @@ const RECIPE_ID_WITH_INGRIDENTS = `
 `;
 
 const CREATE_RECIPE = `
-  INSERT INTO recipes (name, description)
-  VALUES ($1, $2) RETURNING id
+  INSERT INTO recipes (name, description, user_id)
+  VALUES ($1, $2, $3) RETURNING id
 `;
 
 const CREATE_ITEMS = `
@@ -30,7 +27,7 @@ const CREATE_INSTRUCTIONS = `
 
 const GET_RECIPE_BY_ID = `
   SELECT
-  name, description
+  name, description, user_id
   FROM
   recipes 
   WHERE 
@@ -57,6 +54,15 @@ const GET_INSTRUCITION_BY_RECIPE_ID = `
   ORDER BY 
   ordering 
   ASC
+`;
+
+const GET_RECIPE_BY_USER_ID = `
+  SELECT
+  id, name, description
+  FROM
+  recipes
+  WHERE
+  user_id = $1
 `;
 
 const DELETE_RECIPE_QUERY = `
@@ -97,63 +103,41 @@ class RecipeDAO {
     }
     const ingredients = await this.db.runQuery(GET_INGREIDENTS_BY_RECIPE_ID, [id]);
     const instructions = await this.db.runQuery(GET_INSTRUCITION_BY_RECIPE_ID, [id]);
-    return RecipeDAO.formatRecipe(
+    const { name, description, user_id } = recipe.rows[0];
+    return {
       id,
-      recipe.rows[0],
-      ingredients.rows,
-      instructions.rows.map((i) => i.description)
-    );
+      name,
+      description,
+      ingredients: ingredients.rows.map((i) => {
+        let formatted = { ...i };
+        formatted.itemName = formatted.item_name;
+        delete formatted.item_name;
+        return formatted;
+      }),
+      instructions: instructions.rows.map((i) => i.description),
+      userID: user_id,
+    };
   }
 
-  static recipeFromJSON(recipeJSON) {
-    const recipe = new Recipe();
-    recipe.setName(recipeJSON.name);
-    recipe.setDesc(recipeJSON.description);
-    recipe.setIngredients(RecipeDAO.formatJSONIngredients(recipeJSON.ingredients));
-    recipe.setInstructions(recipeJSON.instructions);
-    return recipe;
-  }
-
-  static formatRecipe(id, recipeRow, ingredientsRow, instructionsRow) {
-    const recipe = new Recipe();
-    recipe.setID(id);
-    recipe.setName(recipeRow.name);
-    recipe.setDesc(recipeRow.description);
-    recipe.setIngredients(RecipeDAO.formatIngredients(ingredientsRow));
-    recipe.setInstructions(instructionsRow);
-    return recipe;
-  }
-
-  static formatIngredients(json) {
-    return json.map((element) => {
-      const ingredient = new Ingredient();
-      ingredient.setItemName(element.item_name);
-      ingredient.setQuantity(element.quantity);
-      ingredient.setUnit(element.unit);
-      return ingredient;
-    });
-  }
-
-  static formatJSONIngredients(json) {
-    return json.map((element) => {
-      const ingredient = new Ingredient();
-      ingredient.setItemName(element.itemName);
-      ingredient.setQuantity(element.quantity);
-      ingredient.setUnit(element.unit);
-      return ingredient;
-    });
-  }
-
-  async createRecipe(recipe) {
-    const result = await this.db.runQuery(CREATE_RECIPE, [recipe.getName(), recipe.getDesc()]);
+  async createRecipe(recipe, user_id) {
+    const result = await this.db.runQuery(CREATE_RECIPE, [
+      recipe.name,
+      recipe.description,
+      user_id,
+    ]);
     if (result.rows.length !== 1) {
       return -1;
     }
     const { id } = result.rows[0];
-    await this.createIngredients(id, recipe.getIngredients());
+    await this.createIngredients(id, recipe.ingredients);
 
-    await this.createInstructions(id, recipe.getInstructions());
+    await this.createInstructions(id, recipe.instructions);
     return id;
+  }
+
+  async getRecipesByUserID(userID) {
+    const result = await this.db.runQuery(GET_RECIPE_BY_USER_ID, [userID]);
+    return result.rows;
   }
 
   async createIngredients(recipeId, ingredients) {
@@ -161,7 +145,7 @@ class RecipeDAO {
     const ingredientQuery =
       CREATE_ITEMS +
       ingredients.reduce((acc, val, idx) => {
-        ingredientParams.push(val.getItemName(), val.getUnit(), val.getQuantity());
+        ingredientParams.push(val.itemName, val.unit, val.quantity);
         return `${acc + (idx === 0 ? '' : ',')}($${idx * 3 + 2}, $${idx * 3 + 3}, $${
           idx * 3 + 4
         }, $1) `;

@@ -2,8 +2,6 @@ const Database = require('../../db/dao');
 const { itif } = require('../test_helpers');
 const { readConfigFiles } = require('../../config/config');
 const RecipeDAO = require('../../db/recipe');
-const Recipe = require('../../models/recipe');
-const Ingredient = require('../../models/ingredient');
 
 const RUN_TESTS = process.env.TEST_DB === '1';
 const TEST_ID_1 = 11111111;
@@ -69,40 +67,38 @@ afterAll(async () => {
 });
 
 function validateRecipe(recipe, name, description) {
-  expect(recipe.getName()).toBe(name);
-  expect(recipe.getDesc()).toBe(description);
+  expect(recipe.name).toBe(name);
+  expect(recipe.description).toBe(description);
 }
 
 function validateIngredient(ingr, name, quantity, unit) {
-  expect(ingr.getItemName()).toBe(name);
-  expect(ingr.getQuantity()).toBe(quantity);
-  expect(ingr.getUnit()).toBe(unit);
+  expect(ingr.itemName).toBe(name);
+  expect(ingr.quantity).toBe(quantity);
+  expect(ingr.unit).toBe(unit);
 }
 
 function validateTestRecipe1(recipe) {
-  expect(recipe instanceof Recipe).toBeTruthy();
   validateRecipe(recipe, 'TEST_RECIPE', 'THIS_IS_A_TEST');
 
-  const ingredients = recipe.getIngredients();
+  const ingredients = recipe.ingredients;
   expect(ingredients.length).toBe(2);
   validateIngredient(ingredients[0], 'TEST_ITEM_1', '3/4', 'cup');
   validateIngredient(ingredients[1], 'TEST_ITEM_2', '75', '%');
 
-  const instructions = recipe.getInstructions();
+  const instructions = recipe.instructions;
   expect(instructions.length).toBe(2);
   expect(instructions[0]).toBe('INSTRUCTION_1');
   expect(instructions[1]).toBe('INSTRUCTION_2');
 }
 
 function validateTestRecipe3(recipe) {
-  expect(recipe instanceof Recipe).toBeTruthy();
   validateRecipe(recipe, 'TEST_RECIPE_3', 'THIS_IS_A_TEST_3');
 
-  const ingredients = recipe.getIngredients();
+  const ingredients = recipe.ingredients;
   expect(ingredients.length).toBe(1);
   validateIngredient(ingredients[0], 'TEST_ITEM_3', '1/5', 'gram');
 
-  const instructions = recipe.getInstructions();
+  const instructions = recipe.instructions;
   expect(instructions.length).toBe(1);
   expect(instructions[0]).toBe('INSTRUCTION_3');
 }
@@ -135,19 +131,19 @@ describe('getting recipe data', () => {
 });
 
 function createNewTestRecipe() {
-  const recipe = new Recipe();
-  recipe.setName('TEST_RECIPE_4');
-  recipe.setDesc('TEST_RECIPE_4_DESC');
+  const recipe = {};
+  recipe.name = 'TEST_RECIPE_4';
+  recipe.description = 'TEST_RECIPE_4_DESC';
   // Create Ingredient
-  const ingredient = new Ingredient();
-  ingredient.setItemName('TEST_INGREDIENT_4');
-  ingredient.setQuantity('4');
-  ingredient.setUnit('Oz');
+  const ingredient = {};
+  ingredient.itemName = 'TEST_INGREDIENT_4';
+  ingredient.quantity = '4';
+  ingredient.unit = 'oz';
 
-  recipe.setIngredients([ingredient]);
+  recipe.ingredients = [ingredient];
   // Create Instructions
 
-  recipe.setInstructions(['1', '2']);
+  recipe.instructions = ['1', '2'];
   return recipe;
 }
 
@@ -156,7 +152,7 @@ describe('creating recipes', () => {
     const created = createNewTestRecipe();
     const id = await recipeDAO.createRecipe(created);
     expect(id).not.toBe(-1);
-    created.setID(id);
+    created.id = id;
     const returned = await recipeDAO.getRecipeByID(id);
     // Cleanup now incase test fails
     recipeDAO.removeRecipesWithIDs(id);

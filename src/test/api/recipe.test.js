@@ -25,6 +25,7 @@ describe('creating recipes', () => {
         description: 'Test Recipe',
         instructions: ['Test Instruction'],
         ingredients: [{ itemName: 'Test Item', unit: 'oz', quantity: '1/3' }],
+        user_id: 1,
       })
       .expect('Content-Type', /json/)
       .expect(200)
@@ -34,7 +35,7 @@ describe('creating recipes', () => {
         const { calls } = mockDB.runQuery.mock;
         expect(calls.length).toBe(3);
         expect(calls[0].length).toBe(2);
-        expect(calls[0][1]).toEqual(['Test', 'Test Recipe']);
+        expect(calls[0][1]).toEqual(['Test', 'Test Recipe', 1]);
         expect(calls[1][1]).toEqual([21, 'Test Item', 'oz', '1/3']);
         expect(calls[2][1]).toEqual([21, 'Test Instruction', 1]);
         done();
