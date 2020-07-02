@@ -51,7 +51,7 @@ class NewRecipe extends Component {
       body: JSON.stringify(this.state),
       credentials: 'same-origin',
     };
-    fetch('/recipes/create', requestOptions)
+    fetch('/recipe/create', requestOptions)
       .then((response) => response.json())
       .then((data) => {
         if (!data.errors) {
@@ -134,7 +134,23 @@ class NewRecipe extends Component {
                     <Form.Label>
                       <h3>Name</h3>
                     </Form.Label>
-                    <Form.Control type="text" placeholder="Rum & Coke" />
+                    <Form.Control
+                      type="text"
+                      placeholder="Rum & Coke"
+                      onChange={(event) => {
+                        this.setState({ name: event.target.value });
+                      }}
+                    />
+                    <Form.Label className="my-2">
+                      <h3>Description</h3>
+                    </Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Write small a description of your drink!"
+                      onChange={(event) => {
+                        this.setState({ description: event.target.value });
+                      }}
+                    />
                   </Form.Group>
 
                   <Form.Label>

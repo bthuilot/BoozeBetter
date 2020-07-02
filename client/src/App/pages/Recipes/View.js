@@ -33,14 +33,15 @@ class ViewRecipe extends Component {
       credentials: 'include',
     })
       .then((response) => {
-        return response.json();
+        const res = response.json();
+        res.status = response.status;
+        return res;
       })
       .then((result) => {
         if (!result.errors) {
           this.setState({
             recipe: result.recipe,
             isLoaded: true,
-            notFound: result.recipe.id === '-1',
             canEdit: result.canEdit,
           });
         } else {
@@ -93,10 +94,10 @@ class ViewRecipe extends Component {
   }
 
   renderRecipeContents(recipe) {
-    if (this.state.notFound) {
+    if (this.state.errors.length > 0) {
       return (
         <Col xs={12} md={8} className="text-center my-3">
-          <h1>Recipe not found :(</h1>
+          <h1>There was an error with your request :(</h1>
         </Col>
       );
     }

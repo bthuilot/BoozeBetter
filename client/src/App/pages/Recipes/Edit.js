@@ -76,9 +76,7 @@ class EditRecipe extends Component {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        recipe: this.state.updatedRecipe,
-      }),
+      body: JSON.stringify(this.state.updatedRecipe),
       credentials: 'include',
     };
 
