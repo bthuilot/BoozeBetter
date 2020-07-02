@@ -1,15 +1,8 @@
-import React, { useState } from "react";
-import {
-  Alert,
-  Row,
-  Col,
-  InputGroup,
-  FormControl,
-  Button,
-} from "react-bootstrap";
-import { Redirect } from "react-router-dom";
+import React, { useState } from 'react';
+import { Alert, Row, Col, InputGroup, FormControl, Button } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 
-import "./SearchBar.css";
+import './SearchBar.css';
 
 function containsCaseInsentive(arr, value) {
   return arr.some((item) => item.toUpperCase() === value.toUpperCase());
@@ -17,36 +10,36 @@ function containsCaseInsentive(arr, value) {
 
 function onChange(event, tags, setTags, setCurrentSearch) {
   const val = event.target.value;
-  const lastChar = val.length > 1 ? val.substr(val.length - 1, val.length) : "";
-  if (lastChar === ",") {
-    event.target.value = "";
-    setCurrentSearch("");
+  const lastChar = val.length > 1 ? val.substr(val.length - 1, val.length) : '';
+  if (lastChar === ',') {
+    event.target.value = '';
+    setCurrentSearch('');
     return addNewItem(val, tags, setTags);
-  } else if (lastChar.match(/[a-z\S]*/) === null) {
+  }
+  if (lastChar.match(/[a-z\S]*/) === null) {
     event.target.value = val.substr(0, val.length - 1);
-    return "Please use characters A-Z or Space only";
+    return 'Please use characters A-Z or Space only';
   }
   setCurrentSearch(event.target.value);
   return null;
 }
 
 function addNewItem(val, tags, setTags) {
-  const value = val.slice(0, -1).trim().replace(/\s+/g, " ");
+  const value = val.slice(0, -1).trim().replace(/\s+/g, ' ');
   if (containsCaseInsentive(tags, value)) {
-    return "That item has already been added";
-  } else {
-    setTags(tags.concat(value));
-    return null;
+    return 'That item has already been added';
   }
+  setTags(tags.concat(value));
+  return null;
 }
 
 function getSearchQuery(tags, currentSearch) {
   tags.push(currentSearch);
-  return tags.map((item) => encodeURIComponent(item)).join(",");
+  return tags.map((item) => encodeURIComponent(item)).join(',');
 }
 
 function removeTag(index, tags, setTags) {
-  let newTags = tags.filter((val, i) => i !== index);
+  const newTags = tags.filter((val, i) => i !== index);
   setTags(newTags);
 }
 
@@ -63,25 +56,22 @@ function renderAlert(alert, setAlert) {
         {alert.text}
       </Alert>
     );
-  } else {
-    return <React.Fragment />;
   }
+  return <></>;
 }
 
 export function SearchBar(props) {
-  const [currentSearch, setCurrentSearch] = useState("");
+  const [currentSearch, setCurrentSearch] = useState('');
   const [tags, setTags] = useState([]);
   const [alert, setAlert] = useState({
     show: false,
-    text: "",
+    text: '',
   });
   const [submitQuery, setSubmitQuery] = useState(false);
   const { whiteText } = props;
 
   if (submitQuery) {
-    return (
-      <Redirect push to={"/search?q=" + getSearchQuery(tags, currentSearch)} />
-    );
+    return <Redirect push to={`/search?q=${getSearchQuery(tags, currentSearch)}`} />;
   }
 
   return (
@@ -94,7 +84,7 @@ export function SearchBar(props) {
               aria-label="Start writing some items"
               aria-describedby="basic-addon2"
               onKeyPress={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === 'Enter') {
                   setSubmitQuery(true);
                 }
               }}
@@ -109,10 +99,7 @@ export function SearchBar(props) {
               }}
             />
             <InputGroup.Append>
-              <Button
-                variant="outline-secondary"
-                onClick={() => setSubmitQuery(true)}
-              >
+              <Button variant="outline-secondary" onClick={() => setSubmitQuery(true)}>
                 <span role="img" aria-label="search">
                   🔎
                 </span>
@@ -120,7 +107,7 @@ export function SearchBar(props) {
             </InputGroup.Append>
           </InputGroup>
           <p>
-            <small className={whiteText && "text-white"}>
+            <small className={whiteText && 'text-white'}>
               Psstt... use commas to separate terms
             </small>
           </p>

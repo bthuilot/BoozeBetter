@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { DissmissableAlert } from "./DissmissableAlert";
+import React, { useState, useEffect } from 'react';
+import DissmissableAlert from './DissmissableAlert';
 
-export function AlertDisplay(props) {
-  const [errors, setErrors] = useState(props.errors);
-  const [successes, setSuccesses] = useState(props.successes);
-  const [warnings, setWarnings] = useState(props.warnings);
+export default function AlertDisplay(props) {
+  const { errorsProps, successesProps, warningsProps } = props;
+  const [errors, setErrors] = useState(errorsProps);
+  const [successes, setSuccesses] = useState(successesProps);
+  const [warnings, setWarnings] = useState(warningsProps);
 
   useEffect(() => {
     setErrors(props.errors);
@@ -16,27 +17,15 @@ export function AlertDisplay(props) {
     <>
       {errors &&
         errors.map((error, index) => (
-          <DissmissableAlert
-            key={index}
-            variant="danger"
-            text={error}
-          ></DissmissableAlert>
+          <DissmissableAlert key={index} variant="danger" text={error} />
         ))}
       {warnings &&
         warnings.map((warning, index) => (
-          <DissmissableAlert
-            key={index}
-            variant="warning"
-            text={warning}
-          ></DissmissableAlert>
+          <DissmissableAlert key={index} variant="warning" text={warning} />
         ))}
       {successes &&
         successes.map((success, index) => (
-          <DissmissableAlert
-            key={index}
-            variant="success"
-            text={success}
-          ></DissmissableAlert>
+          <DissmissableAlert key={index} variant="success" text={success} />
         ))}
     </>
   );

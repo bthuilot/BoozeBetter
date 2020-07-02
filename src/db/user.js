@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const NotFoundError = require('../types/errors/notFound');
+const NotAuthenticated = require('../types/errors/notAuthenticated');
 
 const LOGIN_USER = `
 SELECT 
@@ -95,50 +97,46 @@ class UserDAO {
     const result = await this.db.runQuery(GET_ACCOUNT_DETAILS_BY_USER_ID, [userID]);
     if (result.rows.length === 1) {
       return result.rows[0];
-    } else {
-      return { id: -1 };
     }
+    throw new NotFoundError(`Account with id ${userID} not found`);
   }
 
   async deleteUser(userID) {
     const result = await this.db.runQuery(DELETE_USER, [userID]);
     if (result.rowCount === 1) {
       return userID;
-    } else {
-      return -1;
     }
+    throw new NotFoundError('The user was not found');
   }
 
   async login(email, password) {
     const salt = await this.db.runQuery(GET_USER_SALT, [email]);
     if (salt.rows.length === 1) {
-      const password_salt = salt.rows[0].password_salt;
-      const hashedPassword = this.getHashedPassword(password + password_salt);
+      const passwordSalt = salt.rows[0].password_salt;
+      const hashedPassword = UserDAO.getHashedPassword(password + passwordSalt);
       const user = await this.db.runQuery(LOGIN_USER, [email, hashedPassword]);
       if (user.rows.length === 1) {
         return user.rows[0].id;
-      } else {
-        return -1;
       }
-    } else {
-      return -1;
     }
+    throw new NotAuthenticated(
+      'Either the username or passowrd was not correct or the user with that email does not exist'
+    );
   }
 
   async loginWithID(id, password) {
     const salt = await this.db.runQuery(GET_USER_SALT_BY_ID, [id]);
     if (salt.rows.length === 1) {
-      const password_salt = salt.rows[0].password_salt;
-      const hashedPassword = this.getHashedPassword(password + password_salt);
+      const passwordSalt = salt.rows[0].password_salt;
+      const hashedPassword = UserDAO.getHashedPassword(password + passwordSalt);
       const user = await this.db.runQuery(LOGIN_USER_WITH_ID, [id, hashedPassword]);
       if (user.rows.length === 1) {
         return user.rows[0].id;
-      } else {
-        return -1;
       }
-    } else {
-      return -1;
     }
+    throw new NotAuthenticated(
+      'Either the username or passowrd was not correct or the user with that email does not exist'
+    );
   }
 
   async doesEmailExist(email) {
@@ -151,11 +149,11 @@ class UserDAO {
     const { email, displayName, updatedPassword } = user;
     const salt = await this.db.runQuery(GET_USER_SALT_BY_ID, [userID]);
     if (salt.rows.length !== 1) {
-      return -1;
+      throw new NotFoundError('The user was unable to be found');
     }
     if (updatePassword) {
-      const { password_salt } = salt.rows[0];
-      const updatedHash = this.getHashedPassword(updatedPassword + password_salt);
+      const passwordSalt = salt.rows[0].password_salt;
+      const updatedHash = UserDAO.getHashedPassword(updatedPassword + passwordSalt);
       result = await this.db.runQuery(UPDATE_USER_DETAILS_AND_PASSWORD, [
         email,
         displayName,
@@ -165,12 +163,15 @@ class UserDAO {
     } else {
       result = await this.db.runQuery(UPDATE_USER_DETAILS, [email, displayName, userID]);
     }
-    return result.rowCount === 1 ? userID : -1;
+    if (result.rowCount === 1) {
+      return userID;
+    }
+    throw new NotFoundError('The user was unable to be found');
   }
 
   async createUser(user) {
-    const salt = this.generateSalt();
-    const passwordHash = this.getHashedPassword(user.password + salt);
+    const salt = UserDAO.generateSalt();
+    const passwordHash = UserDAO.getHashedPassword(user.password + salt);
     const id = await this.db.runQuery(CREATE_USER, [
       user.email,
       passwordHash,
@@ -180,14 +181,13 @@ class UserDAO {
     return id.rows[0].id;
   }
 
-  generateSalt() {
+  static generateSalt() {
     return crypto.randomBytes(4).toString('hex');
   }
 
-  getHashedPassword(password) {
+  static getHashedPassword(password) {
     const sha256 = crypto.createHash('sha256');
-    const hash = sha256.update(password).digest('base64');
-    return hash;
+    return sha256.update(password).digest('base64');
   }
 }
 

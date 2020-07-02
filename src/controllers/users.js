@@ -1,5 +1,5 @@
 const { check, body } = require('express-validator');
-const { checkValidation, restricted } = require('../helpers');
+const { checkValidation, restricted, handleErrors } = require('../helpers');
 
 class UsersController {
   constructor(manager, authManager) {
@@ -28,15 +28,9 @@ class UsersController {
       (req, res, next) => {
         this.manager
           .deleteUser(req.userID, req.body.password)
-          .then((id) => {
-            if (id === -1) {
-              res.json({ errors: [{ msg: 'User not found or the password is incorrect' }] });
-              return;
-            }
-            next();
-          })
-          .catch(() => {
-            res.status(500).json({ errors: [{ msg: 'An unknown error occurred' }] });
+          .then(() => next())
+          .catch((err) => {
+            handleErrors(err, res);
           });
       },
       this.authManager.removeCookie,
@@ -72,21 +66,10 @@ class UsersController {
         this.manager
           .updateUser(req.userID, user, updatePassword)
           .then((id) => {
-            if (id === -1) {
-              res.json({
-                errors: [
-                  {
-                    msg:
-                      'Unable to update account. Either the user does not exists or the password/email combination is wrong.',
-                  },
-                ],
-              });
-              return;
-            }
             res.json({ successes: [{ msg: 'Successfully updated user' }] });
           })
-          .catch(() => {
-            res.status(500).json({ errors: [{ msg: 'An unkown error occurred' }] });
+          .catch((err) => {
+            handleErrors(err, res);
           });
       }
     );
@@ -132,10 +115,8 @@ class UsersController {
                 this.authManager.createToken(result, res);
                 res.json({ id: result });
               })
-              .catch(() => {
-                res
-                  .status(500)
-                  .json({ errors: [{ msg: 'An unknown error occurred while creating user' }] });
+              .catch((err) => {
+                handleErrors(err, res);
               });
           } else {
             res
@@ -164,15 +145,11 @@ class UsersController {
         this.manager
           .login(email, password)
           .then((userID) => {
-            if (userID === -1) {
-              res.json({ errors: [{ msg: 'The username or password was incorrect' }] });
-              return;
-            }
             this.authManager.createToken(userID, res);
             res.json({ id: userID });
           })
-          .catch(() => {
-            res.status(500).json({ errors: [{ msg: 'An unkown error occured' }] });
+          .catch((err) => {
+            handleErrors(err, res);
           });
       }
     );
@@ -183,8 +160,8 @@ class UsersController {
         .then((result) => {
           res.json({ account: result });
         })
-        .catch(() => {
-          res.json({ errors: [{ msg: 'An unknown error occured' }] });
+        .catch((err) => {
+          handleErrors(err, res);
         });
     });
   }

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Row, Col, Modal, Button } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import { Row, Col, Modal, Button } from 'react-bootstrap';
 
 export function ConfirmModal(props) {
   const [show, setShow] = useState(props.show);
@@ -16,9 +16,7 @@ export function ConfirmModal(props) {
   return (
     <>
       <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          {title && <Modal.Title>{title}</Modal.Title>}
-        </Modal.Header>
+        <Modal.Header closeButton>{title && <Modal.Title>{title}</Modal.Title>}</Modal.Header>
         <Modal.Body>
           <Row className="my-1">
             <Col>

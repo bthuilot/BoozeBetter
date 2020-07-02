@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import { Redirect, Link } from "react-router-dom";
-import { Header } from "../../hooks/Header/Header";
-import Cookies from "js-cookie";
-import { AlertDisplay } from "../../hooks/AlertDisplay/AlertDisplay";
-import { formatErrors } from "../../helpers";
+import React, { Component } from 'react';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Redirect, Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { Header } from '../../hooks/Header/Header';
+import AlertDisplay from '../../hooks/AlertDisplay/AlertDisplay';
+import { formatErrors } from '../../helpers';
 
 class Register extends Component {
   constructor(props) {
@@ -12,13 +12,11 @@ class Register extends Component {
     this.state = {
       errors: [],
       success: false,
-      authToken: Cookies.get("AuthToken"),
+      authToken: Cookies.get('AuthToken'),
       user: {},
       legalToDrink: false,
       acceptTerms: false,
     };
-
-    this.icon = Math.random() > 0;
 
     this.registerUser = this.registerUser.bind(this);
     this.assignToUser = this.assignToUser.bind(this);
@@ -26,16 +24,16 @@ class Register extends Component {
 
   registerUser(event) {
     this.setState({ errors: [] });
-    const user = this.state.user;
+    const { user } = this.state;
     const { acceptTerms, legalToDrink } = this.state;
     const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user, legalToDrink, acceptTerms }),
-      credentials: "include",
+      credentials: 'include',
     };
 
-    fetch("/register", requestOptions)
+    fetch('/register', requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (!result.errors) {
@@ -46,49 +44,27 @@ class Register extends Component {
           });
         }
       })
-      .catch((err) => {
+      .catch(() => {
         this.setState({
-          errors: ["An unknown error occured"],
+          errors: ['An unknown error occured'],
         });
       });
     event.preventDefault();
   }
 
   assignToUser(event, property) {
-    const user = this.state.user;
+    const { user } = this.state;
     user[property] = event.target.value;
     this.setState({ user });
   }
 
-  redirectToAccount(msg) {
-    return (
-      <Redirect
-        to={{
-          pathname: "/account",
-          state: { successes: [msg] },
-        }}
-      />
-    );
-  }
-
-  renderLegalLinks() {
-    return (
-      <p>
-        I agree to the
-        <a href="/terms-and-conditions.pdf"> terms and conditions </a>
-        and
-        <a href="/privacy-policy.pdf"> privacy policy</a>
-      </p>
-    );
-  }
-
   render() {
     if (this.state.authToken) {
-      return this.redirectToAccount("Already logged in");
+      return redirectToAccount('Already logged in');
     }
 
     if (this.state.success) {
-      return this.redirectToAccount("Login Successful");
+      return redirectToAccount('Login Successful');
     }
 
     return (
@@ -96,7 +72,7 @@ class Register extends Component {
         <Header fixed="top" showsearch variant="dark" bg="dark" />
         <Row className="justify-content-center align-self-center mx-0 w-100">
           <Col xs={12} md={8}>
-            <AlertDisplay errors={this.state.errors}></AlertDisplay>
+            <AlertDisplay errors={this.state.errors} />
           </Col>
           <Col xs={12} className="text-center">
             <h1>Register</h1>
@@ -111,7 +87,7 @@ class Register extends Component {
                 <Form.Control
                   type="email"
                   placeholder="Enter email"
-                  onChange={(e) => this.assignToUser(e, "email")}
+                  onChange={(e) => this.assignToUser(e, 'email')}
                 />
               </Form.Group>
 
@@ -120,7 +96,7 @@ class Register extends Component {
                 <Form.Control
                   type="text"
                   placeholder="Enter name"
-                  onChange={(e) => this.assignToUser(e, "displayName")}
+                  onChange={(e) => this.assignToUser(e, 'displayName')}
                 />
               </Form.Group>
 
@@ -129,7 +105,7 @@ class Register extends Component {
                 <Form.Control
                   type="password"
                   placeholder="Password"
-                  onChange={(e) => this.assignToUser(e, "password")}
+                  onChange={(e) => this.assignToUser(e, 'password')}
                 />
               </Form.Group>
 
@@ -138,16 +114,16 @@ class Register extends Component {
                 <Form.Control
                   type="password"
                   placeholder="Confirm Password"
-                  onChange={(e) => this.assignToUser(e, "confirmPassword")}
+                  onChange={(e) => this.assignToUser(e, 'confirmPassword')}
                 />
               </Form.Group>
 
               <Form.Group controlId="formBasicCheckbox">
                 <Form.Check
                   type="checkbox"
-                  label={this.renderLegalLinks()}
+                  label={renderLegalLinks()}
                   onChange={(e) => {
-                    const acceptTerms = this.state.acceptTerms;
+                    const { acceptTerms } = this.state;
                     this.setState({ acceptTerms: !acceptTerms });
                   }}
                 />
@@ -155,7 +131,7 @@ class Register extends Component {
                   type="checkbox"
                   label="I am above legal drinking age in my respective country"
                   onChange={(e) => {
-                    const legalToDrink = this.state.legalToDrink;
+                    const { legalToDrink } = this.state;
                     this.setState({ legalToDrink: !legalToDrink });
                   }}
                 />
@@ -171,4 +147,25 @@ class Register extends Component {
   }
 }
 
+function redirectToAccount(msg) {
+  return (
+    <Redirect
+      to={{
+        pathname: '/account',
+        state: { successes: [msg] },
+      }}
+    />
+  );
+}
+
+function renderLegalLinks() {
+  return (
+    <p>
+      I agree to the
+      <a href="/terms-and-conditions.pdf"> terms and conditions </a>
+      and
+      <a href="/privacy-policy.pdf"> privacy policy</a>
+    </p>
+  );
+}
 export default Register;

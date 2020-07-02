@@ -19,7 +19,7 @@ class UserManager {
   async getAccountDetails(userID) {
     const user = await this.dao.getAccountDetails(userID);
     if (user.id === -1) {
-      throw new Error('No user with ID ' + userID);
+      throw new Error(`No user with ID ${userID}`);
     }
     const recipes = await this.recipeDAO.getRecipesByUserID(userID);
     user.recipes = recipes;
@@ -29,7 +29,6 @@ class UserManager {
   async deleteUser(userID, password) {
     const login = await this.dao.loginWithID(userID, password);
     if (login === -1) {
-      console.log('Test');
       return -1;
     }
     return this.dao.deleteUser(userID);

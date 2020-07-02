@@ -1,3 +1,6 @@
+const NotFoundError = require('../types/errors/notFound');
+const NotAuthenticated = require('../types/errors/notAuthenticated');
+
 const RECIPE_ID_WITH_INGRIDENTS = `
   SELECT DISTINCT 
   recipe_id
@@ -9,6 +12,12 @@ const RECIPE_ID_WITH_INGRIDENTS = `
 const CREATE_RECIPE = `
   INSERT INTO recipes (name, description, user_id)
   VALUES ($1, $2, $3) RETURNING id
+`;
+
+const UPDATE_RECIPE = `
+  UPDATE recipes 
+  SET name = $1, description = $2 
+  WHERE id = $3
 `;
 
 const CREATE_ITEMS = `
@@ -72,6 +81,20 @@ const DELETE_RECIPE_QUERY = `
   id IN 
 `;
 
+const DELETE_INSTRUCTIONS = `
+  DELETE FROM
+  instructions
+  WHERE 
+  recipe_id = $1
+ `;
+
+const DELETE_INGREDIENTS = `
+  DELETE FROM
+  ingredients
+  WHERE 
+  recipe_id = $1
+ `;
+
 class RecipeDAO {
   constructor(database) {
     this.db = database;
@@ -96,20 +119,54 @@ class RecipeDAO {
     return Promise.all(ids.map((id) => this.getRecipeByID(id)));
   }
 
+  async canUserEditReicpe(id, userID) {
+    const recipe = await this.db.runQuery(GET_RECIPE_BY_ID, [id]);
+    return recipe.rows.length === 1 && recipe.rows[0].user_id === userID;
+  }
+
+  async updateRecipe(id, recipe) {
+    const result = await this.db.runQuery(UPDATE_RECIPE, [recipe.name, recipe.description, id]);
+    if (result.rowCount !== 1) {
+      throw new Error('Unable to update recipe');
+    }
+    await this.updateIngredients(id, recipe.ingredients);
+    await this.updateInstructions(id, recipe.instructions);
+    return id;
+  }
+
+  async updateIngredients(recipeId, ingredients) {
+    await this.deleteIngredients(recipeId);
+    return this.createIngredients(recipeId, ingredients);
+  }
+
+  async deleteInstructions(recipeId) {
+    return this.db.runQuery(DELETE_INSTRUCTIONS, [recipeId]);
+  }
+
+  async deleteIngredients(recipeId) {
+    return this.db.runQuery(DELETE_INGREDIENTS, [recipeId]);
+  }
+
+  async updateInstructions(recipeId, instructions) {
+    await this.deleteInstructions(recipeId);
+    return this.createInstructions(recipeId, instructions);
+  }
+
   async getRecipeByID(id) {
     const recipe = await this.db.runQuery(GET_RECIPE_BY_ID, [id]);
     if (recipe.rows.length === 0) {
-      throw new Error(`Recipe with id ${id} doesn't exist`);
+      throw new NotFoundError(`Unable to find recipe with ID ${id}`);
     }
     const ingredients = await this.db.runQuery(GET_INGREIDENTS_BY_RECIPE_ID, [id]);
     const instructions = await this.db.runQuery(GET_INSTRUCITION_BY_RECIPE_ID, [id]);
+    // eslint-disable-next-line camelcase
     const { name, description, user_id } = recipe.rows[0];
     return {
       id,
       name,
       description,
       ingredients: ingredients.rows.map((i) => {
-        let formatted = { ...i };
+        const formatted = { ...i };
         formatted.itemName = formatted.item_name;
         delete formatted.item_name;
         return formatted;
@@ -119,14 +176,10 @@ class RecipeDAO {
     };
   }
 
-  async createRecipe(recipe, user_id) {
-    const result = await this.db.runQuery(CREATE_RECIPE, [
-      recipe.name,
-      recipe.description,
-      user_id,
-    ]);
+  async createRecipe(recipe, userId) {
+    const result = await this.db.runQuery(CREATE_RECIPE, [recipe.name, recipe.description, userId]);
     if (result.rows.length !== 1) {
-      return -1;
+      throw new Error('Unable to create recipe');
     }
     const { id } = result.rows[0];
     await this.createIngredients(id, recipe.ingredients);
@@ -167,7 +220,8 @@ class RecipeDAO {
   async removeRecipesWithIDs(...ids) {
     const params = ids.map((id, index) => `$${index + 1}`);
     const query = `${DELETE_RECIPE_QUERY} (${params.join(', ')})`;
-    await this.db.runQuery(query, ids);
+    const result = await this.db.runQuery(query, ids);
+    return result.rowCount === ids.length;
   }
 }
 

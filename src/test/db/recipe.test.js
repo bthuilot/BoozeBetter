@@ -2,22 +2,29 @@ const Database = require('../../db/dao');
 const { itif } = require('../test_helpers');
 const { readConfigFiles } = require('../../config/config');
 const RecipeDAO = require('../../db/recipe');
+const NotFoundError = require('../../types/errors/notFound');
+const NotAuthenticatedError = require('../../types/errors/notAuthenticated');
+const ForbiddenError = require('../../types/errors/forbidden');
 
 const RUN_TESTS = process.env.TEST_DB === '1';
 const TEST_ID_1 = 11111111;
 const TEST_ID_2 = 11111112;
 const TEST_ID_3 = 11111113;
+const USER_ID = 12345678;
 
 async function setUpTestData(db) {
-  // TODO rename column
   if (RUN_TESTS) {
     await db.runQuery(
-      `INSERT INTO recipes (id, name, description) VALUES ($1, 'TEST_RECIPE', 'THIS_IS_A_TEST')`,
-      [TEST_ID_1]
+      `INSERT INTO users (id, email, password_hash, password_salt) VALUES ($1, 'test@example.com', 'test', 'salt')`,
+      [USER_ID]
     );
     await db.runQuery(
-      `INSERT INTO recipes (id, name, description) VALUES ($1, 'TEST_RECIPE_3', 'THIS_IS_A_TEST_3')`,
-      [TEST_ID_3]
+      `INSERT INTO recipes (id, name, description, user_id) VALUES ($1, 'TEST_RECIPE', 'THIS_IS_A_TEST', $2)`,
+      [TEST_ID_1, USER_ID]
+    );
+    await db.runQuery(
+      `INSERT INTO recipes (id, name, description, user_id) VALUES ($1, 'TEST_RECIPE_3', 'THIS_IS_A_TEST_3', $2)`,
+      [TEST_ID_3, USER_ID]
     );
     await db.runQuery(
       `INSERT INTO ingredients (item_name, quantity, unit, recipe_id) VALUES ('TEST_ITEM_1', '3/4', 'cup', $1)`,
@@ -49,6 +56,7 @@ async function setUpTestData(db) {
 async function tearDownData(db) {
   if (RUN_TESTS) {
     await db.runQuery(`DELETE FROM recipes WHERE id in ($1, $2)`, [TEST_ID_1, TEST_ID_3]);
+    await db.runQuery(`DELETE FROM users WHERE id = $1`, [USER_ID]);
   }
 }
 
@@ -80,12 +88,12 @@ function validateIngredient(ingr, name, quantity, unit) {
 function validateTestRecipe1(recipe) {
   validateRecipe(recipe, 'TEST_RECIPE', 'THIS_IS_A_TEST');
 
-  const ingredients = recipe.ingredients;
+  const { ingredients } = recipe;
   expect(ingredients.length).toBe(2);
   validateIngredient(ingredients[0], 'TEST_ITEM_1', '3/4', 'cup');
   validateIngredient(ingredients[1], 'TEST_ITEM_2', '75', '%');
 
-  const instructions = recipe.instructions;
+  const { instructions } = recipe;
   expect(instructions.length).toBe(2);
   expect(instructions[0]).toBe('INSTRUCTION_1');
   expect(instructions[1]).toBe('INSTRUCTION_2');
@@ -94,11 +102,11 @@ function validateTestRecipe1(recipe) {
 function validateTestRecipe3(recipe) {
   validateRecipe(recipe, 'TEST_RECIPE_3', 'THIS_IS_A_TEST_3');
 
-  const ingredients = recipe.ingredients;
+  const { ingredients } = recipe;
   expect(ingredients.length).toBe(1);
   validateIngredient(ingredients[0], 'TEST_ITEM_3', '1/5', 'gram');
 
-  const instructions = recipe.instructions;
+  const { instructions } = recipe;
   expect(instructions.length).toBe(1);
   expect(instructions[0]).toBe('INSTRUCTION_3');
 }
@@ -110,9 +118,7 @@ describe('getting recipe data', () => {
   });
 
   itif(RUN_TESTS)('get recipe that doesnt exist', async () => {
-    await expect(recipeDAO.getRecipeByID(TEST_ID_2)).rejects.toThrow(
-      `Recipe with id ${TEST_ID_2} doesn't exist`
-    );
+    await expect(recipeDAO.getRecipeByID(TEST_ID_2)).rejects.toThrow(NotFoundError);
   });
 
   itif(RUN_TESTS)('get recipes by id', async () => {
@@ -150,11 +156,12 @@ function createNewTestRecipe() {
 describe('creating recipes', () => {
   itif(RUN_TESTS)('create new recipe', async () => {
     const created = createNewTestRecipe();
-    const id = await recipeDAO.createRecipe(created);
+    const id = await recipeDAO.createRecipe(created, USER_ID);
     expect(id).not.toBe(-1);
     created.id = id;
+    created.userID = USER_ID;
     const returned = await recipeDAO.getRecipeByID(id);
-    // Cleanup now incase test fails
+    // Cleanup now in case test fails
     recipeDAO.removeRecipesWithIDs(id);
     expect(returned).toStrictEqual(created);
   });
@@ -166,7 +173,7 @@ describe('removing reicpes', () => {
     const id = await recipeDAO.createRecipe(created);
     expect(id).not.toBe(-1);
     await recipeDAO.removeRecipesWithIDs(id);
-    expect(recipeDAO.getRecipeByID(id)).rejects.toThrow(`Recipe with id ${id} doesn't exist`);
+    expect(recipeDAO.getRecipeByID(id)).rejects.toThrow(NotFoundError);
   });
 
   itif(RUN_TESTS)('delete multiple recipes', async () => {
@@ -176,11 +183,7 @@ describe('removing reicpes', () => {
     expect(id1).not.toBe(-1);
     expect(id2).not.toBe(-1);
     await recipeDAO.removeRecipesWithIDs(id1, id2);
-    await expect(recipeDAO.getRecipeByID(id1)).rejects.toThrow(
-      `Recipe with id ${id1} doesn't exist`
-    );
-    await expect(recipeDAO.getRecipeByID(id2)).rejects.toThrow(
-      `Recipe with id ${id2} doesn't exist`
-    );
+    await expect(recipeDAO.getRecipeByID(id1)).rejects.toThrow(NotFoundError);
+    await expect(recipeDAO.getRecipeByID(id2)).rejects.toThrow(NotFoundError);
   });
 });

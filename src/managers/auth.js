@@ -11,18 +11,14 @@ class AuthManager {
   }
 
   setUser(req, res, next) {
-    const authToken = req.cookies['AuthToken'];
+    const authToken = req.cookies.AuthToken;
 
     req.userID = this.authTokens[authToken];
     next();
   }
 
-  deleteToken(token) {
-    delete this.authTokens[token];
-  }
-
   removeCookie(req, res, next) {
-    const token = req.cookies['AuthToken'];
+    const token = req.cookies.AuthToken;
     if (token) {
       delete this.authTokens[token];
     }
@@ -38,12 +34,12 @@ class AuthManager {
     this.authTokens[token] = userID;
   }
 
-  generateAuthToken() {
+  static generateAuthToken() {
     return crypto.randomBytes(32).toString('hex');
   }
 
   createToken(userID, res) {
-    const authToken = this.generateAuthToken();
+    const authToken = AuthManager.generateAuthToken();
 
     this.authTokens[authToken] = userID;
     res.cookie('AuthToken', authToken, { maxAge: 86400000 });

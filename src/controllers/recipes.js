@@ -1,5 +1,5 @@
 const { check, validationResult } = require('express-validator');
-const { restricted } = require('../helpers');
+const { restricted, handleErrors } = require('../helpers');
 
 class RecipesController {
   constructor(manager) {
@@ -23,19 +23,11 @@ class RecipesController {
       const { id } = req.params;
       this.manager
         .getRecipeByID(id)
-        .then((res) => {
-          const result = { ...res };
-          if (result.id === -1) {
-            res.json({ errors: [{ msg: `Recipe with id ${id} not found` }] });
-            return;
-          }
-          if (req.userID === result.userID) {
-            result.canEdit = true;
-          }
-          res.json({ recipe: result });
+        .then((result) => {
+          res.json({ recipe: result, canEdit: req.userID === result.userID });
         })
-        .catch(() => {
-          res.json({ errors: [{ msg: 'An unknown error occurred' }] });
+        .catch((err) => {
+          handleErrors(err, res);
         });
     });
 
@@ -83,13 +75,14 @@ class RecipesController {
           res.status(422).json({ errors: errors.array() });
           return;
         }
-        this.manager.createRecipe(req.body, req.userID).then((id) => {
-          if (id === -1) {
-            res.json({ errors: [{ message: 'Unable to create recipe' }] });
-            return;
-          }
-          res.json({ message: `Succesfully created recipe with id ${id}`, id });
-        });
+        this.manager
+          .createRecipe(req.body, req.userID)
+          .then((id) => {
+            res.json({ message: `Succesfully created recipe with id ${id}`, id });
+          })
+          .catch((err) => {
+            handleErrors(err, res);
+          });
       }
     );
   }

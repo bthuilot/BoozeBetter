@@ -22,5 +22,3 @@ exports.up = (pgm) => {
   pgm.createIndex('recipes', 'user_id');
   pgm.createIndex('users', 'email');
 };
-
-exports.down = (pgm) => {};

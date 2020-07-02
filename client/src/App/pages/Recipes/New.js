@@ -1,65 +1,57 @@
-import React, { Component } from "react";
-import {
-  Row,
-  Form,
-  Col,
-  Button,
-  InputGroup,
-  Alert,
-  Container,
-} from "react-bootstrap";
-import { Header } from "../../hooks/Header/Header";
-import Cookies from "js-cookie";
-import { Link } from "react-router-dom";
+import React, { Component } from 'react';
+import { Row, Form, Col, Button, InputGroup, Alert, Container } from 'react-bootstrap';
+import Cookies from 'js-cookie';
+import { Link } from 'react-router-dom';
+import { Header } from '../../hooks/Header/Header';
 
-const UNITS = ["oz(s)", "gram(s)", "cup(s)", "tsp", "tbsp", "pinch", "dash"];
+const UNITS = ['oz(s)', 'gram(s)', 'cup(s)', 'tsp', 'tbsp', 'pinch', 'dash'];
 
 class NewRecipe extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ingredients: [{ quantity: "1 1/2", unit: "Oz", itemName: "Rum" }],
-      instructions: ["Mix items together and shake!"],
-      name: "Rum & Coke",
-      description: "",
+      ingredients: [{ quantity: '1 1/2', unit: 'Oz', itemName: 'Rum' }],
+      instructions: ['Mix items together and shake!'],
+      name: 'Rum & Coke',
+      description: '',
       errors: [],
-      auth: Cookies.get("AuthToken"),
+      authentication: Cookies.get('AuthToken'),
     };
+
+    this.submitNewRecipe = this.submitNewRecipe.bind(this);
   }
 
-  updateIngredient = (index, updated) => {
+  updateIngredient(index, updated) {
     const ingredients = [...this.state.ingredients];
     ingredients[index] = updated;
-    this.setState({ ingredients: ingredients });
-  };
+    this.setState({ ingredients });
+  }
 
-  updateInstruction = (index, updated) => {
+  updateInstruction(index, updated) {
     const instruction = [...this.state.instructions];
     instruction[index] = updated;
     this.setState({ instructions: instruction });
-  };
+  }
 
-  removeIngredient = (index) => {
+  removeIngredient(index) {
     const ingredients = this.state.ingredients.filter((val, i) => i !== index);
-    this.setState({ ingredients: ingredients });
-  };
+    this.setState({ ingredients });
+  }
 
-  removeInstruction = (index) => {
-    const instructions = this.state.instructions.filter(
-      (val, i) => i !== index
-    );
-    this.setState({ instructions: instructions });
-  };
+  removeInstruction(index) {
+    const instructions = this.state.instructions.filter((val, i) => i !== index);
+    this.setState({ instructions });
+  }
 
-  submitNewRecipe = () => {
+  submitNewRecipe() {
     // Simple POST request with a JSON body using fetch
     const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.state),
-      credentials: "same-origin",
+      credentials: 'same-origin',
     };
-    fetch("/recipes/create", requestOptions)
+    fetch('/recipes/create', requestOptions)
       .then((response) => response.json())
       .then((data) => {
         if (!data.errors) {
@@ -71,7 +63,7 @@ class NewRecipe extends Component {
         }
         this.setState({ errors: data.errors, auth });
       });
-  };
+  }
 
   renderNotViewable() {
     return (
@@ -87,7 +79,7 @@ class NewRecipe extends Component {
               <Link
                 className="text-center"
                 to={{
-                  pathname: "/login",
+                  pathname: '/login',
                 }}
               >
                 Login
@@ -97,7 +89,7 @@ class NewRecipe extends Component {
               <Link
                 className="text-center"
                 to={{
-                  pathname: "/register",
+                  pathname: '/register',
                 }}
               >
                 Register
@@ -111,12 +103,15 @@ class NewRecipe extends Component {
 
   render() {
     return (
-      <Container
-        fluid
-        className={this.state.authToken ? "p-0" : "d-flex h-100 w-100"}
-      >
-        <Header variant="dark" bg="dark" fixed="top" showsearch={true} />
-        {this.state.authToken ? (
+      <Container fluid className={this.state.authentication ? 'p-0' : 'd-flex h-100 w-100'}>
+        <Header
+          variant="dark"
+          bg="dark"
+          sticky={this.state.authentication && 'top'}
+          fixed={!this.state.authentication && 'top'}
+          showsearch
+        />
+        {this.state.authentication ? (
           <>
             <Row className="my-4">
               <Col xs={12}>
@@ -126,7 +121,7 @@ class NewRecipe extends Component {
             <Row>
               <Col xs={10}>
                 {this.state.errors.map((err) => (
-                  <Alert key="error" variant={"danger"}>
+                  <Alert key="error" variant="danger">
                     {err.msg}
                   </Alert>
                 ))}
@@ -163,14 +158,24 @@ class NewRecipe extends Component {
                           <Form.Control
                             value={ingredient.quantity}
                             onChange={(event) => {
-                              ingredient.quantity = event.target.value;
-                              this.updateIngredient(index, ingredient);
+                              const updatedIngredient = { ...ingredient };
+                              updatedIngredient.quantity = event.target.value;
+                              this.updateIngredient(index, updatedIngredient);
                             }}
                           />
                         </Col>
                         <Col xs={4} md={2} className="my-1">
                           <Form.Label>Unit</Form.Label>
-                          <Form.Control as="select" custom>
+                          <Form.Control
+                            as="select"
+                            custom
+                            value={ingredient.unit}
+                            onChange={(event) => {
+                              const updatedIngredient = { ...ingredient };
+                              updatedIngredient.unit = event.target.value;
+                              this.updateIngredient(index, updatedIngredient);
+                            }}
+                          >
                             {UNITS.map((unit) => (
                               <option key={unit}>{unit}</option>
                             ))}
@@ -192,10 +197,7 @@ class NewRecipe extends Component {
                           variant="outline-dark"
                           onClick={() => {
                             this.setState({
-                              ingredients: [
-                                ...this.state.ingredients,
-                                { unit: UNITS[0] },
-                              ],
+                              ingredients: [...this.state.ingredients, { unit: UNITS[0] }],
                             });
                           }}
                         >
@@ -214,9 +216,7 @@ class NewRecipe extends Component {
                         <Col xs={12} md={10}>
                           <InputGroup className="mb-3">
                             <InputGroup.Prepend>
-                              <InputGroup.Text id="basic-addon1">
-                                {index + 1}
-                              </InputGroup.Text>
+                              <InputGroup.Text id="basic-addon1">{index + 1}</InputGroup.Text>
                             </InputGroup.Prepend>
                             <Form.Control
                               value={instruction}
@@ -243,7 +243,7 @@ class NewRecipe extends Component {
                           variant="outline-dark"
                           onClick={() => {
                             this.setState({
-                              instructions: [...this.state.instructions, ""],
+                              instructions: [...this.state.instructions, ''],
                             });
                           }}
                         >

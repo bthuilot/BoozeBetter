@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Container, Row, Col } from "react-bootstrap";
-import { Header } from "../hooks/Header/Header";
-import GitHubButton from "react-github-btn";
+import React, { Component } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import GitHubButton from 'react-github-btn';
+import { Header } from '../hooks/Header/Header';
 
 class About extends Component {
   render() {
@@ -16,8 +16,8 @@ class About extends Component {
         <Row className="justify-content-center">
           <Col className="text-center">
             <p className="text-center text-justify">
-              This website was built just for fun but if you have any feedback
-              feel free to create a pull request on Github!
+              This website was built just for fun but if you have any feedback feel free to create a
+              pull request on Github!
             </p>
           </Col>
         </Row>
@@ -28,7 +28,7 @@ class About extends Component {
               aria-label="Follow @bthuilot on GitHub"
             >
               Follow @bthuilot
-            </GitHubButton>{" "}
+            </GitHubButton>{' '}
           </Col>
           <Col xs={4} className="text-center">
             <GitHubButton

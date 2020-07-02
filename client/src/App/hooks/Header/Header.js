@@ -1,34 +1,23 @@
-import React, { useState, useEffect } from "react";
-import {
-  Navbar,
-  Nav,
-  Form,
-  FormControl,
-  Button,
-  Row,
-  Col,
-} from "react-bootstrap";
-import { Redirect } from "react-router-dom";
-import Cookies from "js-cookie";
-import "./Header.css";
-import { SearchBar } from "../SearchBar/SearchBar";
+import React, { useState, useEffect } from 'react';
+import { Navbar, Nav, Form, FormControl, Button, Row, Col } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import './Header.css';
+import { SearchBar } from '../SearchBar/SearchBar';
 
 export function Header(props) {
   const [searchOpen, setSearchOpen] = useState(false);
-  const loggedIn = Cookies.get("AuthToken");
+  const loggedIn = Cookies.get('AuthToken');
   const { showsearch, ...otherProps } = props;
 
   return (
     <>
-      <div
-        id="searchOverlay"
-        style={{ zIndex: 2000, width: searchOpen ? "100%" : "0%" }}
-      >
+      <div id="searchOverlay" style={{ zIndex: 2000, width: searchOpen ? '100%' : '0%' }}>
         <Row className="justify-content-right my-2">
           <Col className="text-right" xs={12} md={10}>
             <a
               className="closebtn"
-              style={{ cursor: "pointer" }}
+              style={{ cursor: 'pointer' }}
               onClick={() => setSearchOpen(false)}
             >
               ❌
@@ -43,7 +32,7 @@ export function Header(props) {
       </div>
       <Navbar collapseOnSelect expand="lg" {...otherProps}>
         <Navbar.Brand href="/">
-          <span role="img" style={{ fontSize: "1.25em" }} aria-label="booze">
+          <span role="img" style={{ fontSize: '1.25em' }} aria-label="booze">
             🍻
           </span>
         </Navbar.Brand>
@@ -54,13 +43,13 @@ export function Header(props) {
             {loggedIn && <Nav.Link href="/recipes/new">Add Recipe</Nav.Link>}
           </Nav>
           <Nav>
-            {" "}
+            {' '}
             {showsearch && (
               <Nav.Link>
                 <span
                   role="img"
                   className="text-center"
-                  style={{ fontSize: "1em" }}
+                  style={{ fontSize: '1em' }}
                   aria-label="booze"
                   onClick={() => setSearchOpen(true)}
                 >

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Row, Col } from "react-bootstrap";
-import Cookies from "js-cookie";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Row, Col } from 'react-bootstrap';
+import Cookies from 'js-cookie';
 
 export function RequiresSignin(props) {
   const [removeToken, setRemoveToken] = useState(props.removeToken);
@@ -11,7 +11,7 @@ export function RequiresSignin(props) {
   }, [props]);
 
   if (removeToken) {
-    Cookies.remove("AuthToken");
+    Cookies.remove('AuthToken');
   }
 
   return (
@@ -19,9 +19,7 @@ export function RequiresSignin(props) {
       <Col>
         <Row className="mb-3">
           <Col className="justify-content-center text-center">
-            <h3 className="text-center">
-              You must be signed in to view this page
-            </h3>
+            <h3 className="text-center">You must be signed in to view this page</h3>
           </Col>
         </Row>
         <Row className="mb-3 justify-content-center">
@@ -29,7 +27,7 @@ export function RequiresSignin(props) {
             <Link
               className="text-center"
               to={{
-                pathname: "/login",
+                pathname: '/login',
               }}
             >
               Login
@@ -39,7 +37,7 @@ export function RequiresSignin(props) {
             <Link
               className="text-center"
               to={{
-                pathname: "/register",
+                pathname: '/register',
               }}
             >
               Register

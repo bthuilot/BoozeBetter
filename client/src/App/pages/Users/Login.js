@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
-import { Redirect, Link } from "react-router-dom";
-import { Header } from "../../hooks/Header/Header";
-import Cookies from "js-cookie";
-import { AlertDisplay } from "../../hooks/AlertDisplay/AlertDisplay";
+import React, { Component } from 'react';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Redirect, Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { Header } from '../../hooks/Header/Header';
+import AlertDisplay from '../../hooks/AlertDisplay/AlertDisplay';
 
 class Login extends Component {
   constructor(props) {
@@ -19,13 +19,13 @@ class Login extends Component {
   }
 
   updateEmail(event) {
-    const user = this.state.user;
+    const { user } = this.state;
     user.email = event.target.value;
     this.setState({ user });
   }
 
   updatePassword(event) {
-    const user = this.state.user;
+    const { user } = this.state;
     user.password = event.target.value;
     this.setState({ user });
   }
@@ -33,13 +33,13 @@ class Login extends Component {
   login(event) {
     // Simple POST request with a JSON body using fetch
     const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.state.user),
-      credentials: "include",
+      credentials: 'include',
     };
 
-    fetch("/login", requestOptions)
+    fetch('/login', requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (!result.errors) {
@@ -47,14 +47,14 @@ class Login extends Component {
         } else {
           this.setState({
             errors: [
-              "Login failed. Please check your username and password combination is correct",
+              'Login failed. Please check your username and password combination is correct',
             ],
           });
         }
       })
       .catch((err) => {
         this.setState({
-          errors: ["An unknown error occured please try again"],
+          errors: ['An unknown error occured please try again'],
         });
       });
     event.preventDefault();
@@ -65,24 +65,22 @@ class Login extends Component {
       <Redirect
         push
         to={{
-          pathname: "/account",
+          pathname: '/account',
           state: { successes: [msg] },
         }}
       />
     );
   }
 
-  errorMessage(msg) {
-    return;
-  }
+  errorMessage(msg) {}
 
   render() {
     if (this.state.success) {
-      return this.redirectToAccount("Login Successful");
+      return this.redirectToAccount('Login Successful');
     }
 
     if (this.state.authToken) {
-      return this.redirectToAccount("Already logged in");
+      return this.redirectToAccount('Already logged in');
     }
 
     return (
@@ -90,7 +88,7 @@ class Login extends Component {
         <Header fixed="top" showsearch variant="dark" bg="dark" />
         <Row className="justify-content-center align-self-center mx-0 w-100">
           <Col xs={12} md={8}>
-            <AlertDisplay errors={this.state.errors}></AlertDisplay>
+            <AlertDisplay errors={this.state.errors} />
           </Col>
           <Col xs={12} className="text-center">
             <h1>Login</h1>
@@ -102,11 +100,7 @@ class Login extends Component {
             <Form onSubmit={this.login}>
               <Form.Group controlId="formBasicEmail">
                 <Form.Label>Email address</Form.Label>
-                <Form.Control
-                  type="email"
-                  placeholder="Enter email"
-                  onChange={this.updateEmail}
-                />
+                <Form.Control type="email" placeholder="Enter email" onChange={this.updateEmail} />
               </Form.Group>
 
               <Form.Group controlId="formBasicPassword">

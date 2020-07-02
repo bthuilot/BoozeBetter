@@ -1,12 +1,12 @@
-import React, { Component } from "react";
-import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
-import { Redirect, Link } from "react-router-dom";
-import { Header } from "../../hooks/Header/Header";
-import Cookies from "js-cookie";
-import { AlertDisplay } from "../../hooks/AlertDisplay/AlertDisplay";
-import { formatErrors } from "../../helpers";
-import { ConfirmModal } from "../../hooks/ConfirmModal/ConfirmModal";
-import { RequiresSignin } from "../../hooks/RequiresSignin/RequiresSignin";
+import React, { Component } from 'react';
+import { Container, Row, Col, Form, Button, Spinner } from 'react-bootstrap';
+import { Redirect, Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
+import { Header } from '../../hooks/Header/Header';
+import AlertDisplay from '../../hooks/AlertDisplay/AlertDisplay';
+import { formatErrors } from '../../helpers';
+import { ConfirmModal } from '../../hooks/ConfirmModal/ConfirmModal';
+import { RequiresSignin } from '../../hooks/RequiresSignin/RequiresSignin';
 
 class EditAccount extends Component {
   constructor(props) {
@@ -17,7 +17,7 @@ class EditAccount extends Component {
       deleted: false,
       showDelete: false,
       updatePassword: false,
-      authenticated: Cookies.get("AuthToken"),
+      authenticated: Cookies.get('AuthToken'),
       updatedUser: {},
       account: {},
     };
@@ -28,7 +28,7 @@ class EditAccount extends Component {
 
   componentDidMount() {
     if (this.props.location.state) {
-      const successes = this.props.location.state.successes;
+      const { successes } = this.props.location.state;
       this.setState({ successes });
     }
     this.fetchAccount();
@@ -37,12 +37,12 @@ class EditAccount extends Component {
   delete() {
     // Simple POST request with a JSON body using fetch
     const requestOptions = {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: this.state.user.password }),
-      credentials: "include",
+      credentials: 'include',
     };
-    fetch("/account", requestOptions)
+    fetch('/account', requestOptions)
       .then((response) => response.json())
       .then((res) => {
         if (res.errors) {
@@ -56,7 +56,7 @@ class EditAccount extends Component {
           errors: [
             {
               msg:
-                "Error occurred while trying to delete the account. Reload the page and try again",
+                'Error occurred while trying to delete the account. Reload the page and try again',
             },
           ],
         });
@@ -64,8 +64,8 @@ class EditAccount extends Component {
   }
 
   fetchAccount() {
-    fetch("/account/details", {
-      credentials: "include",
+    fetch('/account/details', {
+      credentials: 'include',
     })
       .then((response) => response.json())
       .then((result) => {
@@ -88,7 +88,7 @@ class EditAccount extends Component {
       })
       .catch((err) => {
         this.setState({
-          errors: ["An unknown error occured"],
+          errors: ['An unknown error occured'],
         });
       });
   }
@@ -104,16 +104,16 @@ class EditAccount extends Component {
   updateUser(event) {
     this.setState({ errors: [] });
     const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         user: this.state.updatedUser,
         updatePassword: this.state.updatePassword,
       }),
-      credentials: "include",
+      credentials: 'include',
     };
 
-    fetch("/account/update", requestOptions)
+    fetch('/account/update', requestOptions)
       .then((response) => response.json())
       .then((result) => {
         if (!result.errors) {
@@ -127,16 +127,16 @@ class EditAccount extends Component {
       .catch((err) => {
         console.log(err);
         this.setState({
-          errors: [{ msg: "An unknown error occured" }],
+          errors: [{ msg: 'An unknown error occured' }],
         });
       });
     event.preventDefault();
   }
 
   assignToUser(event, property) {
-    const user = this.state.updatedUser;
-    user[property] = event.target.value;
-    this.setState({ user });
+    const updatedUser = this.state.updatedUser;
+    updatedUser[property] = event.target.value;
+    this.setState({ updatedUser });
   }
 
   redirectTo(msg, link) {
@@ -156,7 +156,7 @@ class EditAccount extends Component {
       <>
         <Row className="justify-content-center align-self-center mx-0 w-100">
           <Col xs={12} md={8}>
-            <AlertDisplay errors={this.state.errors}></AlertDisplay>
+            <AlertDisplay errors={this.state.errors} />
           </Col>
           <Col xs={12} className="text-center">
             <h1>Update user</h1>
@@ -168,7 +168,7 @@ class EditAccount extends Component {
                 <Form.Control
                   type="email"
                   placeholder="Enter email"
-                  onChange={(e) => this.assignToUser(e, "email")}
+                  onChange={(e) => this.assignToUser(e, 'email')}
                   defaultValue={this.state.account.email}
                 />
               </Form.Group>
@@ -178,14 +178,14 @@ class EditAccount extends Component {
                 <Form.Control
                   type="text"
                   placeholder="Enter name"
-                  onChange={(e) => this.assignToUser(e, "displayName")}
+                  onChange={(e) => this.assignToUser(e, 'displayName')}
                   defaultValue={this.state.account.display_name}
                 />
               </Form.Group>
               <Form.Group controlId="formBasicCheckbox">
                 <Form.Check
                   type="checkbox"
-                  label={"Update password?"}
+                  label="Update password?"
                   onChange={(event) => {
                     const update = this.state.updatePassword;
                     this.setState({
@@ -203,7 +203,7 @@ class EditAccount extends Component {
                       required="required"
                       type="password"
                       placeholder="Password"
-                      onChange={(e) => this.assignToUser(e, "updatedPassword")}
+                      onChange={(e) => this.assignToUser(e, 'updatedPassword')}
                     />
                   </Form.Group>
 
@@ -213,7 +213,7 @@ class EditAccount extends Component {
                       required="required"
                       type="password"
                       placeholder="Confirm Password"
-                      onChange={(e) => this.assignToUser(e, "confirmPassword")}
+                      onChange={(e) => this.assignToUser(e, 'confirmPassword')}
                     />
                   </Form.Group>
                 </>
@@ -227,7 +227,7 @@ class EditAccount extends Component {
                 <Form.Control
                   type="password"
                   placeholder="Password"
-                  onChange={(e) => this.assignToUser(e, "password")}
+                  onChange={(e) => this.assignToUser(e, 'password')}
                 />
               </Form.Group>
 
@@ -257,12 +257,12 @@ class EditAccount extends Component {
   render() {
     if (this.state.deleted) {
       this.setState({ deleted: false });
-      return this.redirectTo("Account deleted", "/register");
+      return this.redirectTo('Account deleted', '/register');
     }
 
     if (this.state.updated) {
       this.setState({ updated: false });
-      return this.redirectTo("Account updated", "/account");
+      return this.redirectTo('Account updated', '/account');
     }
 
     if (!this.state.authenticated) {

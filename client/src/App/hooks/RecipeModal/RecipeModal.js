@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Redirect } from "react-router-dom";
-import { Row, Col, Modal, Button } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
+import { Row, Col, Modal, Button } from 'react-bootstrap';
 
 export function RecipeModal(props) {
   const [show, setShow] = useState(props.show);

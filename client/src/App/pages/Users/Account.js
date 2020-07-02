@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   Container,
   Row,
@@ -8,12 +8,12 @@ import {
   ListGroup,
   FormControl,
   Button,
-} from "react-bootstrap";
-import { AlertDisplay } from "../../hooks/AlertDisplay/AlertDisplay";
-import { Header } from "../../hooks/Header/Header";
-import Cookies from "js-cookie";
-import { RequiresSignin } from "../../hooks/RequiresSignin/RequiresSignin";
-import { formatErrors } from "../../helpers";
+} from 'react-bootstrap';
+import Cookies from 'js-cookie';
+import AlertDisplay from '../../hooks/AlertDisplay/AlertDisplay';
+import { Header } from '../../hooks/Header/Header';
+import { RequiresSignin } from '../../hooks/RequiresSignin/RequiresSignin';
+import { formatErrors } from '../../helpers';
 
 class Account extends Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class Account extends Component {
       successes: [],
       isLoaded: false,
       account: {},
-      authenticated: Cookies.get("AuthToken"),
+      authenticated: Cookies.get('AuthToken'),
     };
 
     this.fetchAccount = this.fetchAccount.bind(this);
@@ -32,14 +32,14 @@ class Account extends Component {
 
   componentDidMount() {
     if (this.props.location.state) {
-      const successes = this.props.location.state.successes;
+      const { successes } = this.props.location.state;
       this.setState({ successes });
     }
     this.fetchAccount();
   }
 
   signout() {
-    fetch("/signout", { method: "PUT" })
+    fetch('/signout', { method: 'PUT' })
       .then(() => {
         this.setState({ authenticated: false });
       })
@@ -47,8 +47,7 @@ class Account extends Component {
         this.setState({
           errors: [
             {
-              msg:
-                "Error occurred while trying to sign out. Reload the page and try again",
+              msg: 'Error occurred while trying to sign out. Reload the page and try again',
             },
           ],
         });
@@ -56,8 +55,8 @@ class Account extends Component {
   }
 
   fetchAccount() {
-    fetch("/account/details", {
-      credentials: "include",
+    fetch('/account/details', {
+      credentials: 'include',
     })
       .then((response) => response.json())
       .then((result) => {
@@ -76,7 +75,7 @@ class Account extends Component {
       })
       .catch((err) => {
         this.setState({
-          errors: ["An unknown error occured"],
+          errors: ['An unknown error occured'],
         });
       });
   }
@@ -94,7 +93,10 @@ class Account extends Component {
     return (
       <>
         <Col xs={12} md={8} className="text-center my-3">
-          <h1>Cheers{name && " " + name}!</h1>
+          <h1>
+Cheers{name && ` ${name}`}
+!
+</h1>
         </Col>
         <Col xs={12} md={6} className="my-3 text-center justify-content-center">
           <InputGroup className="mb-3">
@@ -108,7 +110,7 @@ class Account extends Component {
             />
           </InputGroup>
         </Col>
-        <Col xs={12}></Col>
+        <Col xs={12} />
         <Col xs={4} md={2} className="text-center">
           <Button className="mx-1" href="/account/edit">
             Edit Account
@@ -119,26 +121,20 @@ class Account extends Component {
             Sign out
           </Button>
         </Col>
-        <Col xs={12}></Col>
+        <Col xs={12} />
         <Col xs={4}>
           <hr className="mt-2 mb-3" />
         </Col>
-        <Col xs={12}></Col>
+        <Col xs={12} />
         <Col xs={12} className="text-center">
           <h3>Cocktails</h3>
         </Col>
         <Col xs={12} md={8} className="my-2 text-center">
-          {this.state.account.recipes.length === 0 && (
-            <small>No recipes found :(</small>
-          )}
+          {this.state.account.recipes.length === 0 && <small>No recipes found :(</small>}
           <ListGroup>
             {this.state.account.recipes.map((recipe, index) => {
               return (
-                <ListGroup.Item
-                  key={index}
-                  action
-                  href={`/recipes/${recipe.id}`}
-                >
+                <ListGroup.Item key={index} action href={`/recipes/${recipe.id}`}>
                   {recipe.name}
                 </ListGroup.Item>
               );
@@ -150,36 +146,24 @@ class Account extends Component {
   }
 
   renderAccount() {
-    return (
-      <>
-        {this.state.isLoaded
-          ? this.renderAccountDetails()
-          : this.renderSpinner()}
-      </>
-    );
+    return <>{this.state.isLoaded ? this.renderAccountDetails() : this.renderSpinner()}</>;
   }
 
   render() {
     return (
-      <Container
-        fluid
-        className={this.state.authenticated ? "p-0" : "d-flex w-100 h-100"}
-      >
+      <Container fluid className={this.state.authenticated ? 'p-0' : 'd-flex w-100 h-100'}>
         <Header
           variant="dark"
           bg="dark"
-          fixed={!this.state.authenticated && "top"}
-          stick={this.state.authenticated && "top"}
+          fixed={!this.state.authenticated && 'top'}
+          stick={this.state.authenticated && 'top'}
           showsearch
         />
         {this.state.authenticated ? (
           <>
             <Row className="justify-content-center align-self-center mx-0 my-2 w-100">
               <Col xs={12}>
-                <AlertDisplay
-                  errors={this.state.errors}
-                  successes={this.state.successes}
-                ></AlertDisplay>
+                <AlertDisplay errors={this.state.errors} successes={this.state.successes} />
               </Col>
               {this.renderAccount()}
             </Row>

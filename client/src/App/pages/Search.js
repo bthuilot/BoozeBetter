@@ -1,9 +1,9 @@
-import React, { Component } from "react";
-import { Row, Card, Col, Button, Spinner, Container } from "react-bootstrap";
-import { parse } from "query-string";
-import { Header } from "../hooks/Header/Header";
-import { Sidebar } from "../hooks/Sidebar/Sidebar";
-import { RecipeModal } from "../hooks/RecipeModal/RecipeModal";
+import React, { Component } from 'react';
+import { Row, Card, Col, Button, Spinner, Container } from 'react-bootstrap';
+import { parse } from 'query-string';
+import { Header } from '../hooks/Header/Header';
+import { Sidebar } from '../hooks/Sidebar/Sidebar';
+import { RecipeModal } from '../hooks/RecipeModal/RecipeModal';
 
 class Search extends Component {
   constructor(props) {
@@ -20,9 +20,9 @@ class Search extends Component {
 
   getTerms(q) {
     return q
-      .split(",")
+      .split(',')
       .map((item) => decodeURIComponent(item))
-      .filter((i) => i !== "");
+      .filter((i) => i !== '');
   }
 
   showModal(recipe) {
@@ -30,8 +30,8 @@ class Search extends Component {
   }
 
   fetchSearch() {
-    var parsed = parse(this.props.location.search);
-    fetch("/recipes?q=" + parsed.q)
+    const parsed = parse(this.props.location.search);
+    fetch(`/recipes?q=${parsed.q}`)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -65,10 +65,7 @@ class Search extends Component {
     return (
       <Container fluid className="p-0">
         <Header variant="dark" bg="dark" sticky="top" showsearch />
-        <RecipeModal
-          show={this.state.showModal}
-          recipe={this.state.currentRecipe}
-        />
+        <RecipeModal show={this.state.showModal} recipe={this.state.currentRecipe} />
         <Row className="justify-content-center">
           <Col md={3} sm={12}>
             <Sidebar tags={this.state.params} />
@@ -78,12 +75,8 @@ class Search extends Component {
               <Col className="text-center">
                 <h2>
                   {this.state.recipes.length}
-                  <span
-                    role="img"
-                    style={{ fontSize: "1.25em" }}
-                    aria-label="booze"
-                  >
-                    {" "}
+                  <span role="img" style={{ fontSize: '1.25em' }} aria-label="booze">
+                    {' '}
                     🍺
                   </span>
                   's found
@@ -107,20 +100,12 @@ class Search extends Component {
                       <Card.Header>{recipe.name}</Card.Header>
                       <Card.Body>
                         <Card.Title>
-                          {recipe.description === "" ? (
-                            <br />
-                          ) : (
-                            recipe.description
-                          )}
+                          {recipe.description === '' ? <br /> : recipe.description}
                         </Card.Title>
                         <Card.Text>
-                          Ingredients:{" "}
-                          {recipe.ingredients.map((i) => i.itemName).join(", ")}
+                          Ingredients: {recipe.ingredients.map((i) => i.itemName).join(', ')}
                         </Card.Text>
-                        <Button
-                          variant="primary"
-                          onClick={() => this.showModal(recipe)}
-                        >
+                        <Button variant="primary" onClick={() => this.showModal(recipe)}>
                           View Recipe
                         </Button>
                       </Card.Body>
@@ -130,11 +115,7 @@ class Search extends Component {
               ) : (
                 <Row className="w-100 justify-content-center">
                   <Col className="m-5 text-center">
-                    <Spinner
-                      animation="border"
-                      className="orange-spinner"
-                      size="lg"
-                    />
+                    <Spinner animation="border" className="orange-spinner" size="lg" />
                   </Col>
                 </Row>
               )}

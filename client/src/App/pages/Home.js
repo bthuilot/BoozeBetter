@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Row, Col, Container } from "react-bootstrap";
-import { SearchBar } from "../hooks/SearchBar/SearchBar";
-import { Header } from "../hooks/Header/Header";
+import React, { Component } from 'react';
+import { Row, Col, Container } from 'react-bootstrap';
+import { SearchBar } from '../hooks/SearchBar/SearchBar';
+import { Header } from '../hooks/Header/Header';
 
 class Home extends Component {
   render() {
