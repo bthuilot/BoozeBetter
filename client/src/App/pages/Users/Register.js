@@ -46,7 +46,7 @@ class Register extends Component {
       })
       .catch(() => {
         this.setState({
-          errors: ['An unknown error occured'],
+          errors: ['An unknown error occurred'],
         });
       });
     event.preventDefault();

@@ -14,8 +14,10 @@ chown -R ec2-user:ec2-user /var/www/
 chown -R ec2-user:ec2-user /var/log/BoozeBetter
 chown -R root:root /var/www/protected
 
-# set files to 644 
+# set files to 644
 find /var/www/ -type f -print0 | xargs -0 chmod 0644
+
+chmod 545 /var/www/BoozeBetter/scripts/*
 
 # set folders to 755
 find /var/www/ -type d -print0 | xargs -0 chmod 0755
