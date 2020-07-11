@@ -9,7 +9,7 @@
     "migrate": "node-pg-migrate",
     "database:url": "node bin/printDatabaseUrl.js",
     "lint": "eslint \"./**/*.js\"",
-    "stop": "kill -2 $(ps aux | grep BoozeBetter | awk  '{print $2}' | head -n 1)",
+    "stop": "kill -2 $(ps aux | grep BoozeBetter | grep -v grep | awk  '{print $2}' | head -n 1)",
     "start:prod": "env NODE_ENV=production yarn start"
   },
   "keywords": [
