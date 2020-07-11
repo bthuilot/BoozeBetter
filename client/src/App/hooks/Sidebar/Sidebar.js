@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Redirect } from "react-router-dom";
-import { Alert, Row, Col } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
+import { Alert, Row, Col } from 'react-bootstrap';
 
 export function Sidebar(props) {
   const [tags, setTags] = useState([...props.tags]);
@@ -13,12 +13,7 @@ export function Sidebar(props) {
 
   if (reload) {
     return (
-      <Redirect
-        push
-        to={
-          "/search?q=" + tags.map((item) => encodeURIComponent(item)).join(",")
-        }
-      />
+      <Redirect push to={`/search?q=${tags.map((item) => encodeURIComponent(item)).join(',')}`} />
     );
   }
 

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Redirect } from "react-router-dom";
-import { Row, Col, Modal, Button } from "react-bootstrap";
+import React, { useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
+import { Row, Col, Modal, Button } from 'react-bootstrap';
 
 export function RecipeModal(props) {
   const [show, setShow] = useState(props.show);
@@ -57,7 +57,7 @@ export function RecipeModal(props) {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleClose}>
+          <Button variant="primary" href={`/recipes/${recipe.id}`}>
             View recipe page
           </Button>
         </Modal.Footer>
