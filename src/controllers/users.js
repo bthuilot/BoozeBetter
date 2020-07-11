@@ -65,7 +65,7 @@ class UsersController {
         const { user, updatePassword } = req.body;
         this.manager
           .updateUser(req.userID, user, updatePassword)
-          .then((id) => {
+          .then(() => {
             res.json({ successes: [{ msg: 'Successfully updated user' }] });
           })
           .catch((err) => {

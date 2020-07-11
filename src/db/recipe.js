@@ -1,5 +1,4 @@
 const NotFoundError = require('../types/errors/notFound');
-const NotAuthenticated = require('../types/errors/notAuthenticated');
 
 const RECIPE_ID_WITH_INGRIDENTS = `
   SELECT DISTINCT 

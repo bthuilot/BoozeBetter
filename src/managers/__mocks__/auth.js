@@ -1,6 +1,8 @@
 class AuthManager {
+  static number = 21;
+
   setUser(req, res, next) {
-    req.userID = 21;
+    req.userID = AuthManager.number;
     next();
   }
 

@@ -1,5 +1,5 @@
-const { check, validationResult } = require('express-validator');
-const { restricted, handleErrors } = require('../helpers');
+const { check } = require('express-validator');
+const { restricted, handleErrors, checkValidation } = require('../helpers');
 
 class RecipesController {
   constructor(manager) {
@@ -69,12 +69,8 @@ class RecipesController {
         check('description', 'Description must be a string').isString(),
       ],
       restricted,
+      checkValidation,
       (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-          res.status(422).json({ errors: errors.array() });
-          return;
-        }
         this.manager
           .createRecipe(req.body, req.userID)
           .then((id) => {
@@ -136,17 +132,13 @@ class RecipesController {
         check('description', 'Description must be a string').isString(),
       ],
       restricted,
+      checkValidation,
       (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-          res.status(422).json({ errors: errors.array() });
-          return;
-        }
         const { id } = req.params;
         this.manager
           .updateRecipe(id, req.body, req.userID)
           .then(() => {
-            res.json({ successes: { msg: `Successfully updated recipe` } });
+            res.json({ successes: [{ msg: `Successfully updated recipe` }] });
           })
           .catch((err) => {
             handleErrors(err, res);
