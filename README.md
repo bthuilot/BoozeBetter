@@ -13,7 +13,7 @@ When making a PR be sure to run all tests (including Database tests `yarn test:d
 
 ## Running locally
 
-_This assumes you have a postgres db setup. if not try (this)[https://lmgtfy.com/?q=how+to+set+up+postgres+database]_
+_This assumes you have a postgres db setup. if not try [this]([https://lmgtfy.com/?q=how+to+set+up+postgres+database)_
 
 After cloning the repo, `cd` into the directory
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, Row, Col, InputGroup, FormControl, Button } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import './SearchBar.css';
 
@@ -12,8 +12,8 @@ function onChange(event, tags, setTags, setCurrentSearch) {
   const val = event.target.value;
   const lastChar = val.length > 1 ? val.substr(val.length - 1, val.length) : '';
   if (lastChar === ',') {
-    event.target.value = '';
     setCurrentSearch('');
+    event.target.value = '';
     return addNewItem(val, tags, setTags);
   }
   if (lastChar.match(/[a-z\S]*/) === null) {
@@ -22,6 +22,15 @@ function onChange(event, tags, setTags, setCurrentSearch) {
   }
   setCurrentSearch(event.target.value);
   return null;
+}
+
+function resetPage(setTerms, setCurrentSearch, setAlert, history) {
+  setTerms([]);
+  setAlert({
+    show: false,
+    text: '',
+  });
+  setCurrentSearch('');
 }
 
 function addNewItem(val, tags, setTags) {
@@ -61,18 +70,15 @@ function renderAlert(alert, setAlert) {
 }
 
 export function SearchBar(props) {
+  const history = useHistory();
   const [currentSearch, setCurrentSearch] = useState('');
   const [tags, setTags] = useState([]);
   const [alert, setAlert] = useState({
     show: false,
     text: '',
   });
-  const [submitQuery, setSubmitQuery] = useState(false);
   const { whiteText } = props;
 
-  if (submitQuery) {
-    return <Redirect push to={`/search?q=${getSearchQuery(tags, currentSearch)}`} />;
-  }
 
   return (
     <Col>
@@ -85,7 +91,8 @@ export function SearchBar(props) {
               aria-describedby="basic-addon2"
               onKeyPress={(e) => {
                 if (e.key === 'Enter') {
-                  setSubmitQuery(true);
+                  history.push(`/search?q=${getSearchQuery(tags, currentSearch)}`)
+                  resetPage(setTags, setCurrentSearch, setAlert);
                 }
               }}
               onChange={(e) => {
@@ -99,7 +106,10 @@ export function SearchBar(props) {
               }}
             />
             <InputGroup.Append>
-              <Button variant="outline-secondary" onClick={() => setSubmitQuery(true)}>
+              <Button variant="outline-secondary" onClick={() => {
+                  history.push(`/search?q=${getSearchQuery(tags, currentSearch)}`)
+                  resetPage(setTags, setCurrentSearch, setAlert);
+              }}>
                 <span role="img" aria-label="search">
                   🔎
                 </span>
