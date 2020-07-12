@@ -56,7 +56,7 @@ class Search extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.location.search !== prevProps.location.search) {
-      this.setState({ isLoaded: false, error: null, recipes: [] });
+      this.setState({ isLoaded: false, error: null, recipes: [], showModal: false });
       this.fetchSearch();
     }
   }

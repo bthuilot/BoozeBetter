@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar, Nav, Form, FormControl, Button, Row, Col } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
+import { Navbar, Nav, Row, Col } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import './Header.css';
 import { SearchBar } from '../SearchBar/SearchBar';
 
 export function Header(props) {
+  const history = useHistory();
   const [searchOpen, setSearchOpen] = useState(false);
   const loggedIn = Cookies.get('AuthToken');
   const { showsearch, ...otherProps } = props;
+
+  useEffect(() => {
+    history.listen(() => {
+      setSearchOpen(false);
+    });
+  });
 
   return (
     <>
