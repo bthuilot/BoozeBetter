@@ -257,6 +257,7 @@ describe('deleting user', () => {
     AuthManager.number = null;
     request(app)
       .delete('/account')
+      .send({password: 'Test1234'})
       .expect('Content-Type', /json/)
       .expect(403)
       .then((response) => {
@@ -267,10 +268,18 @@ describe('deleting user', () => {
       });
   });
 
+  it('fails if no password is given', (done) => {
+    request(app)
+      .delete('/account')
+      .expect('Content-Type', /json/)
+      .expect(400, done)
+  });
+
   it('deletes account', (done) => {
     UserManager.deleteUserMock.mockReturnValue(21)
     request(app)
       .delete('/account')
+      .send({password: 'Test1234'})
       .expect('Content-Type', /json/)
       .expect(200, done)
   });

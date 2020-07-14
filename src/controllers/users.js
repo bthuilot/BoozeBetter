@@ -19,9 +19,8 @@ class UsersController {
           'password',
           'Password must be at least 8 characters and contain at least 1 digit, lowercase and upperCase letter'
         )
-          .optional()
           .isString()
-          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, 'i'),
+          .matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})'), 'i'),
       ],
       checkValidation,
       restricted,
@@ -52,14 +51,14 @@ class UsersController {
         )
           .optional()
           .isString()
-          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, 'i'),
+          .matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})'), 'i'),
         check(
           'user.updatedPassword',
           'Password must be at least 8 characters and contain at least 1 digit, lowercase and upperCase letter'
         )
           .optional()
           .isString()
-          .matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'), 'i'),
+          .matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})'), 'i'),
         body('user.confirmPassword', 'Passwords do not match').custom((value, { req }) => {
           if (req.body.updatePassword && value !== req.body.user.updatedPassword) {
             throw new Error('Passwords do not match');
@@ -90,7 +89,7 @@ class UsersController {
           'Password must be at least 8 characters and contain at least 1 digit, lowercase and uppercase letter'
         )
           .isString()
-          .matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'), 'i'),
+          .matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})'), 'i'),
         check('acceptTerms').isBoolean(),
         check('legalToDrink').isBoolean(),
         check('user.displayName').optional().isString(),
@@ -140,7 +139,7 @@ class UsersController {
         check('email', 'Please enter a valid email').isEmail(),
         check('password', 'The username or password was incorrect')
           .isString()
-          .matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'), 'i'),
+          .matches(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})'), 'i'),
       ],
       checkValidation,
       (req, res) => {
