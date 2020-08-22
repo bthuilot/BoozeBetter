@@ -19,6 +19,12 @@ const UPDATE_RECIPE = `
   WHERE id = $3
 `;
 
+const IS_ADMIN_USER = `
+  SELECT admin
+  FROM users 
+  WHERE id = $1
+`;
+
 const CREATE_ITEMS = `
   INSERT INTO 
   ingredients 
@@ -120,7 +126,8 @@ class RecipeDAO {
 
   async canUserEditReicpe(id, userID) {
     const recipe = await this.db.runQuery(GET_RECIPE_BY_ID, [id]);
-    return recipe.rows.length === 1 && recipe.rows[0].user_id === userID;
+    const isAdminUser = await this.db.runQuery(IS_ADMIN_USER, [userID]);
+    return (recipe.rows.length === 1 && recipe.rows[0].user_id === userID) || isAdminUser.rows[0];
   }
 
   async updateRecipe(id, recipe) {

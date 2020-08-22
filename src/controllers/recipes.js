@@ -7,7 +7,7 @@ class RecipesController {
   }
 
   registerRoutes(app) {
-    // Retunrs a pagninated list of recipes based on search query
+    // Returns a paginated list of recipes based on search query
     app.get('/recipes', (req, res) => {
       const { limit, q } = req.query;
       const query = RecipesController.parseQuery(q);

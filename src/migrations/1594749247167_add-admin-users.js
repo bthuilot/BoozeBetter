@@ -4,6 +4,6 @@ exports.shorthands = undefined;
 
 exports.up = (pgm) => {
   pgm.addColumn('users', {
-    admin: { type: 'boolean', default: false },
+    is_admin: { type: 'boolean', default: false },
   });
 };
