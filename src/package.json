@@ -25,7 +25,7 @@
     "bootstrap": "^4.4.1",
     "concurrently": "^5.2.0",
     "cookie-parser": "^1.4.5",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-validator": "^6.5.0",
     "js-yaml": "^3.14.0",
     "node-pg-migrate": "^4.8.0",
